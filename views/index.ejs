@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,10 @@
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <h1>Testing WebSocket Connection</h1>
+    <%- include('layout', { body: `
+        <h1>Welcome to Questline</h1>
+        <p>Your productivity hub!</p>
+    ` }) %>
 
     <script>
         const socket = io(); // Connect to the WebSocket server

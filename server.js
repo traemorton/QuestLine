@@ -1,4 +1,3 @@
-// 'npm run devStart' in console to run the file.
 const http = require('http');
 const { Server } = require('socket.io');
 
@@ -14,6 +13,7 @@ app.get("/", (req, res) => {
     res.render('index');
 });
 
+// Ensure the userRouter exists
 const userRouter = require('./routes/users');
 app.use('/users', userRouter);
 
@@ -22,7 +22,21 @@ function logger(req, res, next) {
     next();
 }
 
-// WebSocket connection...
+// Load environment variables
+require('dotenv').config(); // Load .env file into process.env
+const mongoose = require('mongoose');
+
+// MongoDB connection setup
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
+        console.error('Could not connect to MongoDB:', error);
+    });
+
+
+// WebSocket connection
 io.on('connection', (socket) => {
     console.log('A user has connected:', socket.id);
 
@@ -33,7 +47,7 @@ io.on('connection', (socket) => {
     // Real-time event example
     socket.on('task update', (taskData) => {
         console.log('Task updated:', taskData);
-        io.emit('task update', taskData); // Broadcast
+        io.emit('task update', taskData); // Broadcast to all connected clients
     });
 });
 
@@ -41,4 +55,10 @@ const port = 3000;
 
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
+});
+
+// Error handler (optional)
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
 });
