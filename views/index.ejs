@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Testing WebSocket Connection</h1>
+
+    <script>
+        const socket = io(); // Connect to the WebSocket server
+
+        socket.on('connect', () => {
+            console.log('Connected to server with ID:', socket.id);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+        });
+
+        // Test task update event
+        socket.emit('task update', { taskId: 1, status: 'Completed' });
+
+        // Listen for task updates
+        socket.on('task update', (taskData) => {
+            console.log('Task update received from server:', taskData);
+        });
+    </script>
+</body>
+</html>
