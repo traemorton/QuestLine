@@ -5,10 +5,13 @@ const express = require('express');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
 const userRouter = require('./routes/users');
+// Used to seed users for texting purposes.
 const seedUsers = require('./utils/seedUsers'); // Import the seed function
 
 app.set('view engine', 'ejs');
+app.use(express.static('public')); // For implementing style.css
 app.use(express.json()); // Middleware for parsing JSON
 app.use(express.urlencoded({ extended: true })); // Middleware for parsing URL-encoded data
 app.use(logger);
