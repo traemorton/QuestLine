@@ -33,7 +33,28 @@ app.get("/", (req, res) => {
 });
 
 // Example RESTful API for tasks
-app.use('/users', userRouter);
+//app.use('/users', userRouter);
+
+// Define the User schema and model
+const UserSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    password: String,  // In production, never store plaintext passwords
+}, { timestamps: true });
+
+const User = mongoose.models.User || mongoose.model('User', UserSchema);  // This line fixes the overwriting issue
+
+// Route for rendering users
+app.get("/users", async (req, res) => {
+    try {
+        const users = await User.find(); // Fetch all users from the database
+        res.render('users', { users });  // Pass the users to the 'users' view
+    } catch (error) {
+        console.error('Error fetching users:', error);  // Log the detailed error
+        res.status(500).send('Error fetching users');
+    }
+});
+
 
 app.get('/tasks', async (req, res) => {
     try {
