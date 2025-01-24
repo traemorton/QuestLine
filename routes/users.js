@@ -1,31 +1,29 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../models/User');
 
-router.get('/', (req, res) => {
-    res.send('User List');
-})
+// GET all users
+router.get('/', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch users', error });
+    }
+});
 
-router.get('/new', (req, res) => {
-    res.send("User New Form");
-})
+// POST a new user
+router.post('/', async (req, res) => {
+    const { name, email, password } = req.body;
 
-router.post('/', (req, res) => {
-    res.send('Create User');
-})
+    const newUser = new User({ name, email, password });
 
-router.route("/:id").get((req, res) => {
-    console.log(req.user);
-    res.send(`Get User with ID ${req.params.id}`);
-}).put((req, res) => {
-    res.send(`Update User with ID ${req.params.id}`);
-}).delete((req, res) => {
-    res.send(`Delete User with ID ${req.params.id}`);
-})
-
-const users = [{ name: "Kyle "}, { name: "Sally " }];
-router.param("id", (req, res, next, id) => {
-    req.user = users[id];
-    next();
-})
+    try {
+        const savedUser = await newUser.save();
+        res.status(201).json(savedUser);
+    } catch (error) {
+        res.status(400).json({ message: 'Failed to create user', error });
+    }
+});
 
 module.exports = router;
