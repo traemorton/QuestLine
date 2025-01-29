@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= user.name %>'s Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .profile-container {
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: auto;
+            text-align: center;
+        }
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .info {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+    
+    <div class="profile-container">
+        <h1><%= user.name %>'s Profile</h1>
+        <img class="profile-picture" src="<%= user.profilePicture %>" alt="Profile Picture">
+        <p class="info"><strong>Email:</strong> <%= user.email %></p>
+        <p class="info"><strong>Bio:</strong> <%= user.bio || 'No bio available' %></p>
+        <p class="info"><strong>Role:</strong> <%= user.role %></p>
+        <p class="info"><strong>Location:</strong> <%= user.location %></p>
+        <p class="info"><strong>Last Login:</strong> <%= user.lastLogin.toDateString() %></p>
+        <p class="info"><strong>Account Created:</strong> <%= user.accountCreated.toDateString() %></p>
+    </div>
+    
+    <%- include('partials/footer') %>
+</body>
+</html>
