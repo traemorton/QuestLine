@@ -7,8 +7,8 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const userRouter = require('./routes/users');
-// Used to seed users for texting purposes.
-const seedUsers = require('./utils/seedUsers'); // Import the seed function
+// Used to seed users for testing purposes.
+//const seedUsers = require('./utils/seedUsers'); // Import the seed function
 
 app.set('view engine', 'ejs');
 app.use(express.static('public')); // For implementing style.css
@@ -42,18 +42,21 @@ app.get("/", (req, res) => {
 const UserSchema = new mongoose.Schema({
     name: String,
     email: String,
-    password: String,  // In production, never store plaintext passwords
+    password: String,  // Need to not store plaintext passwords
 }, { timestamps: true });
 
-const User = mongoose.models.User || mongoose.model('User', UserSchema);  // This line fixes the overwriting issue
+const User = mongoose.models.User || mongoose.model('User', UserSchema);
 
 // Route for rendering users
-app.get("/users", async (req, res) => {
+app.get('/users', async (req, res) => {
     try {
-        const users = await User.find(); // Fetch all users from the database
-        res.render('users', { users });  // Pass the users to the 'users' view
+        const users = await User.find(); // Fetch users from the database
+        res.render('users', { 
+            users, 
+            successMessage: '' // Ensure successMessage is always defined
+        });
     } catch (error) {
-        console.error('Error fetching users:', error);  // Log the detailed error
+        console.error('Error fetching users:', error);
         res.status(500).send('Error fetching users');
     }
 });
@@ -79,6 +82,27 @@ app.post('/tasks', async (req, res) => {
         res.status(400).json({ message: 'Failed to create task', error });
     }
 });
+
+app.get('/signup', (req, res) => {
+    res.render('signup', { successMessage: '' });
+});
+
+app.post('/signup', async (req, res) => {
+    const { name, email, password } = req.body;
+
+    try {
+        const newUser = new User({ name, email, password });
+        await newUser.save();
+        res.render('signup', {
+            successMessage: 'User successfully registered!',
+        });
+    } catch (error) {
+        console.error('Error signing up user:', error);
+        res.status(500).send('Error signing up user');
+    }
+});
+
+
 
 function logger(req, res, next) {
     console.log(req.originalUrl);
