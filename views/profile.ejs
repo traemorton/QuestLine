@@ -37,6 +37,7 @@
     <div class="profile-container">
         <h1><%= user.name %>'s Profile</h1>
         <img class="profile-picture" src="<%= user.profilePicture %>" alt="Profile Picture">
+        <p class="info"><strong>Username:</strong> <%= user.username %></p>
         <p class="info"><strong>Email:</strong> <%= user.email %></p>
         <p class="info"><strong>Bio:</strong> <%= user.bio || 'No bio available' %></p>
         <p class="info"><strong>Role:</strong> <%= user.role %></p>

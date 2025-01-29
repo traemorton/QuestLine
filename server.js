@@ -32,8 +32,9 @@ app.use(session({
 // Mongoose User Schema
 const UserSchema = new mongoose.Schema({
     name: String,
-    email: { type: String, unique: true },
-    password: String
+    username: { type: String, unique: true, required: true, match: [/^\S+$/, 'Username cannot contain spaces'] },
+    email: { type: String, unique: true, required: true },
+    password: { type: String, required: true }
 }, { timestamps: true });
 
 const User = require('./models/User');
@@ -67,16 +68,21 @@ app.get('/users', async (req, res) => {
 
 // Signup Route
 app.get('/signup', (req, res) => {
-    res.render('signup', { successMessage: '' });
+    res.render('signup', { errorMessage: '' }); // Ensure errorMessage is always defined
 });
 
 app.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, username, email, password } = req.body;
+
+    if (/\s/.test(username)) {
+        return res.render('signup', { errorMessage: 'Username cannot contain spaces' });
+    }
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
             name,
+            username,
             email,
             password: hashedPassword,
             profilePicture: '/images/default-profile.png', // Set default profile picture
@@ -91,12 +97,13 @@ app.post('/signup', async (req, res) => {
         });
 
         await newUser.save();
-        res.render('signup', { successMessage: 'User successfully registered!' });
+        res.render('signup', { errorMessage: 'User successfully registered!' }); // Success message
     } catch (error) {
         console.error('Error signing up user:', error);
-        res.status(500).send('Error signing up user');
+        res.render('signup', { errorMessage: 'Error signing up user' }); // Pass error message on failure
     }
 });
+
 
 // Login Route
 app.get('/login', (req, res) => {
@@ -104,17 +111,17 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ username });
         if (!user) {
-            return res.render('login', { errorMessage: 'Invalid email or password' });
+            return res.render('login', { errorMessage: 'Invalid username or password' });
         }
 
         const match = await bcrypt.compare(password, user.password);
         if (!match) {
-            return res.render('login', { errorMessage: 'Invalid email or password' });
+            return res.render('login', { errorMessage: 'Invalid username or password' });
         }
 
         // Update lastLogin and onlineStatus
@@ -130,6 +137,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
+
 // Dashboard Route (Protected)
 app.get('/dashboard', isAuthenticated, async (req, res) => {
     try {
@@ -139,6 +147,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
         res.render('dashboard', { 
             user: {
                 name: user.name,
+                username: user.username,
                 email: user.email,
                 profilePicture: user.profilePicture,
                 bio: user.bio,
@@ -156,14 +165,12 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
     }
 });
 
-app.get('/profile/:id', async (req, res) => {
+app.get('/profile/:username', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findOne({ username: req.params.username });
         if (!user) return res.status(404).send('User not found');
 
-        res.render('profile', { 
-            user
-        });
+        res.render('profile', { user });
     } catch (error) {
         console.error('Error fetching profile:', error);
         res.status(500).send('Error fetching profile');

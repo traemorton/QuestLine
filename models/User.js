@@ -3,6 +3,12 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     // Default fields
     name: { type: String, required: true },
+    username: { 
+        type: String, 
+        required: true, 
+        unique: true, 
+        match: [/^\S+$/, 'Usernames cannot contain spaces'] // Ensures no spaces
+    },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     
