@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
     password: String
 }, { timestamps: true });
 
-const User = mongoose.model('User', UserSchema);
+const User = require('./models/User');
 
 // Authentication Middleware
 function isAuthenticated(req, res, next) {
@@ -75,7 +75,20 @@ app.post('/signup', async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword });
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword,
+            profilePicture: '/images/default-profile.png', // Set default profile picture
+            bio: '',
+            role: 'User',
+            location: 'Unknown',
+            onlineStatus: false,
+            lastLogin: Date.now(),
+            accountCreated: Date.now(),
+            preferences: { theme: 'light', notifications: true },
+            isBanned: false
+        });
 
         await newUser.save();
         res.render('signup', { successMessage: 'User successfully registered!' });
@@ -104,6 +117,11 @@ app.post('/login', async (req, res) => {
             return res.render('login', { errorMessage: 'Invalid email or password' });
         }
 
+        // Update lastLogin and onlineStatus
+        user.lastLogin = Date.now();
+        user.onlineStatus = true;
+        await user.save();
+
         req.session.userId = user._id;
         res.redirect('/dashboard');
     } catch (error) {
@@ -116,16 +134,47 @@ app.post('/login', async (req, res) => {
 app.get('/dashboard', isAuthenticated, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
-        res.render('dashboard', { user: user ? user.name : 'Guest' });
+        if (!user) return res.redirect('/login');
+
+        res.render('dashboard', { 
+            user: {
+                name: user.name,
+                email: user.email,
+                profilePicture: user.profilePicture,
+                bio: user.bio,
+                role: user.role,
+                location: user.location,
+                onlineStatus: user.onlineStatus,
+                lastLogin: user.lastLogin,
+                preferences: user.preferences,
+                isBanned: user.isBanned
+            }
+        });
     } catch (error) {
         console.error('Error fetching user:', error);
         res.redirect('/login');
     }
 });
 
+app.get('/profile/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).send('User not found');
+
+        res.render('profile', { 
+            user
+        });
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        res.status(500).send('Error fetching profile');
+    }
+});
 
 // Logout Route
-app.get('/logout', (req, res) => {
+app.get('/logout', async (req, res) => {
+    if (req.session.userId) {
+        await User.findByIdAndUpdate(req.session.userId, { onlineStatus: false });
+    }
     req.session.destroy(() => {
         res.redirect('/login');
     });

@@ -21,8 +21,15 @@
             margin: auto;
             text-align: center;
         }
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
         .info {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 18px;
             color: #555;
         }
@@ -43,16 +50,21 @@
     </style>
 </head>
 <body>
-
     <%- include('partials/header') %>
 
     <div class="container">
-        <h1>Welcome to Your Dashboard</h1>
-        <p class="info">User ID: <%= user %></p>
+        <h1>Welcome, <%= user.name %>!</h1>
+        <img src="<%= user.profilePicture %>" alt="Profile Picture" class="profile-pic">
+        <p class="info"><strong>Email:</strong> <%= user.email %></p>
+        <p class="info"><strong>Bio:</strong> <%= user.bio || 'No bio available' %></p>
+        <p class="info"><strong>Role:</strong> <%= user.role %></p>
+        <p class="info"><strong>Location:</strong> <%= user.location %></p>
+        <p class="info"><strong>Online Status:</strong> <%= user.onlineStatus ? 'Online' : 'Offline' %></p>
+        <p class="info"><strong>Last Login:</strong> <%= new Date(user.lastLogin).toLocaleString() %></p>
+        <p class="info"><strong>Preferences:</strong> Theme - <%= user.preferences.theme %>, Notifications - <%= user.preferences.notifications ? 'Enabled' : 'Disabled' %></p>
         <a href="/logout" class="logout-btn">Logout</a>
     </div>
 
     <%- include('partials/footer') %>
-
 </body>
 </html>
