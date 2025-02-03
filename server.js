@@ -29,6 +29,12 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 
+// Middleware to set isAuthenticated for all views
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = !!req.session.userId; // true if user is logged in, false otherwise
+    next();
+});
+
 // Mongoose User Schema
 const UserSchema = new mongoose.Schema({
     name: String,
