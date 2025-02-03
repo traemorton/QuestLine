@@ -1,0 +1,171 @@
+<%# This is profile-header.ejs %>
+
+<style>
+  /* The profile header with the profile picture */
+  .profile-header {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+  }
+
+  .profile-picture {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+  }
+
+  /* The sliding menu styles */
+  .side-menu {
+      position: fixed;
+      top: 0;
+      right: -100%; /* Initially off-screen */
+      width: 250px;
+      height: 100vh;
+      background-color: #fff;
+      border-left: 1px solid #ccc;
+      box-shadow: -4px 0px 8px rgba(0, 0, 0, 0.1);
+      transition: right 0.3s ease-in-out;
+      z-index: 1000;
+      padding: 20px;
+  }
+
+  .side-menu a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: #333;
+      margin: 5px 0;
+      border-radius: 4px;
+  }
+
+  .side-menu a:hover {
+      background-color: #f0f0f0;
+  }
+
+  /* Overlay styles */
+  .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 999;
+  }
+
+  /* Profile details section at the top of the menu */
+  .profile-details {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      position: relative;
+  }
+
+  .profile-details img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px;
+  }
+
+  .profile-details .user-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+  }
+
+  .profile-details .username {
+      font-weight: bold;
+      font-size: 14px;
+  }
+
+  .profile-details .full-name {
+      font-size: 12px;
+      color: #666;
+  }
+
+  /* Close button (X) styling */
+  .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 18px;
+      color: #333;
+      cursor: pointer;
+      background: none;
+      border: none;
+  }
+
+  .close-btn:hover {
+      color: #f00; /* Red color on hover */
+  }
+</style>
+
+<!-- Profile Picture and Menu Trigger -->
+<div class="profile-header">
+    <img src="<%= user.profilePicture %>" alt="<%= user.username %>'s profile picture" class="profile-picture" id="profile-picture">
+</div>
+
+<!-- Sliding Menu -->
+<div class="side-menu" id="side-menu">
+    <!-- Profile Info Section -->
+    <div class="profile-details">
+        <img src="<%= user.profilePicture %>" alt="<%= user.username %>'s profile picture">
+        <div class="user-info">
+            <div class="username"><%= user.username %></div>
+            <div class="full-name"><%= user.name %></div>
+        </div>
+        <!-- Close Button (X) -->
+        <button class="close-btn" id="close-btn">&times;</button>
+    </div>
+
+    <!-- Navigation Links -->
+    <a href="/profile/<%= user.username %>">View Profile</a>
+    <a href="/edit-profile">Settings</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<!-- Overlay (Dim the background when the menu is open) -->
+<div class="overlay" id="overlay"></div>
+
+<script>
+  // Get the profile picture, side menu, overlay, and close button elements
+  const profilePicture = document.getElementById('profile-picture');
+  const sideMenu = document.getElementById('side-menu');
+  const overlay = document.getElementById('overlay');
+  const closeButton = document.getElementById('close-btn');
+
+  // Toggle the side menu when the profile picture is clicked
+  profilePicture.addEventListener('click', () => {
+      const isMenuOpen = sideMenu.style.right === '0px';
+      if (isMenuOpen) {
+          sideMenu.style.right = '-100%'; // Hide menu (completely off-screen)
+          overlay.style.display = 'none';  // Hide overlay
+      } else {
+          sideMenu.style.right = '0px';   // Show menu
+          overlay.style.display = 'block'; // Show overlay
+      }
+  });
+
+  // Close the menu if the overlay is clicked
+  overlay.addEventListener('click', () => {
+      sideMenu.style.right = '-100%'; // Hide menu (completely off-screen)
+      overlay.style.display = 'none';  // Hide overlay
+  });
+
+  // Close the menu if the close button (X) is clicked
+  closeButton.addEventListener('click', () => {
+      sideMenu.style.right = '-100%'; // Hide menu (completely off-screen)
+      overlay.style.display = 'none';  // Hide overlay
+  });
+</script>
