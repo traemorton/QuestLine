@@ -171,6 +171,41 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
     }
 });
 
+app.get('/edit-profile', isAuthenticated, async (req, res) => {
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login');
+
+        res.render('edit-profile', { user, errorMessage: '', successMessage: '' });
+    } catch (error) {
+        console.error('Error loading edit profile page:', error);
+        res.redirect('/dashboard');
+    }
+});
+
+app.post('/edit-profile', isAuthenticated, async (req, res) => {
+    const { name, email, bio, location, theme, notifications } = req.body;
+
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login');
+
+        // Update user fields
+        user.name = name;
+        user.email = email;
+        user.bio = bio;
+        user.location = location;
+        user.preferences.theme = theme;
+        user.preferences.notifications = notifications === 'on';
+
+        await user.save();
+        res.render('edit-profile', { user, successMessage: 'Profile updated successfully!', errorMessage: '' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.render('edit-profile', { user: req.body, successMessage: '', errorMessage: 'Error updating profile' });
+    }
+});
+
 app.get('/profile/:username', async (req, res) => {
     try {
         const user = await User.findOne({ username: req.params.username });

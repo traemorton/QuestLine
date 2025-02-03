@@ -63,6 +63,7 @@
         <p class="info"><strong>Online Status:</strong> <%= user.onlineStatus ? 'Online' : 'Offline' %></p>
         <p class="info"><strong>Last Login:</strong> <%= new Date(user.lastLogin).toLocaleString() %></p>
         <p class="info"><strong>Preferences:</strong> Theme - <%= user.preferences.theme %>, Notifications - <%= user.preferences.notifications ? 'Enabled' : 'Disabled' %></p>
+        <a href="/edit-profile" class="btn">Edit Profile</a>
         <a href="/logout" class="logout-btn">Logout</a>
     </div>
 
