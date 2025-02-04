@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
+            padding-top: 50px;
         }
         h1 {
             color: #333;
@@ -47,10 +48,44 @@
         .logout-btn:hover {
             background-color: #c82333;
         }
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        /* New Left Section (Burger + Page Title) */
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        /* Fix title alignment */
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-left: 10px;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
-    <%- include('partials/profile-header', { user: user }) %>
+    <div class="topbar">
+        <div class="left-section">
+            <%- include('partials/burger-nav') %>
+            <span class="page-title">Dashboard</span>
+        </div>
+        <%- include('partials/profile-header', { user: user }) %>
+    </div>
 
     <%- include('partials/header') %>
 

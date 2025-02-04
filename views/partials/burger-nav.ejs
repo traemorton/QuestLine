@@ -1,0 +1,93 @@
+<%# burger-nav.ejs %>
+
+<style>
+  /* Burger Menu icon */
+  .burger-menu {
+      display: block;
+      cursor: pointer;
+      font-size: 30px;
+      padding: 5px;
+      background: none;
+      border: none;
+  }
+
+  /* Navigation menu for the burger */
+  .burger-menu-items {
+      position: fixed;
+      top: 0;
+      left: -100%; /* Initially off-screen */
+      width: 250px;
+      height: 100vh;
+      background-color: #fff;
+      border-right: 1px solid #ccc;
+      box-shadow: 4px 0px 8px rgba(0, 0, 0, 0.1);
+      transition: left 0.3s ease-in-out;
+      z-index: 1000;
+      padding: 20px;
+      border-radius: 0 10px 10px 0;
+  }
+
+  .burger-menu-items a {
+      display: block;
+      padding: 10px;
+      text-decoration: none;
+      color: #333;
+      margin: 5px 0;
+      border-radius: 4px;
+  }
+
+  .burger-menu-items a:hover {
+      background-color: #f0f0f0;
+  }
+
+  /* Close the burger menu */
+  .burger-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 18px;
+      color: #333;
+      cursor: pointer;
+      background: none;
+      border: none;
+  }
+
+  .burger-close-btn:hover {
+      color: #f00; /* Red color on hover */
+  }
+</style>
+
+<!-- Burger Menu Icon -->
+<button class="burger-menu" id="burger-menu">&#9776;</button>
+
+<!-- Burger Navigation Menu -->
+<div class="burger-menu-items" id="burger-menu-items">
+    <button class="burger-close-btn" id="burger-close-btn">&times;</button>
+
+    <a href="/home">Home</a>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+    <a href="/services">Services</a>
+</div>
+
+<script>
+  // Burger Menu Logic
+  const burgerMenu = document.getElementById('burger-menu');
+  const burgerMenuItems = document.getElementById('burger-menu-items');
+  const burgerCloseBtn = document.getElementById('burger-close-btn');
+
+  // Toggle the burger menu
+  burgerMenu.addEventListener('click', () => {
+      const isMenuOpen = burgerMenuItems.style.left === '0px';
+      if (isMenuOpen) {
+          burgerMenuItems.style.left = '-100%'; // Hide burger menu
+      } else {
+          burgerMenuItems.style.left = '0px';   // Show burger menu
+      }
+  });
+
+  // Close burger menu when close button is clicked
+  burgerCloseBtn.addEventListener('click', () => {
+      burgerMenuItems.style.left = '-100%';   // Hide burger menu
+  });
+</script>
