@@ -3,6 +3,8 @@
 ## Overview
 Questline is a web-based project management platform designed for game development. It centralizes documentation, task assignment, and timelines to enhance team collaboration and productivity.
 
+**This Repository currently holds the development of the project. This is NOT a finished project!!**
+
 ## Key Features
 - **User & Team Management**: Secure registration, team roles, and permissions.
 - **Task Management**: Create, assign, and track tasks with deadlines.
@@ -17,9 +19,10 @@ Questline is a web-based project management platform designed for game developme
 ### Steps to Run Locally:
 1. Clone the Repository
 ```
-git clone https://github.com/traemorton/QuestLine.git cd QuestLine
+git clone https://github.com/traemorton/QuestLine.git
 ```
-2. Install Dependencies
+2. Open in IDE
+3. Install Dependencies
 ```
 npm install
 ```
