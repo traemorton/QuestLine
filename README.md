@@ -37,3 +37,4 @@ npm run devStart
 ```
 http://localhost:3000
 ```
+![CI](https://github.com/traemorton/QuestLine/actions/workflows/ci.yml/badge.svg)
