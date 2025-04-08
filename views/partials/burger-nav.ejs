@@ -40,6 +40,15 @@
       background-color: #f0f0f0;
   }
 
+  .categories {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      position: relative;
+  } 
+
   /* Close the burger menu */
   .burger-close-btn {
       position: absolute;
@@ -55,14 +64,31 @@
   .burger-close-btn:hover {
       color: #f00; /* Red color on hover */
   }
+
+  /* Overlay styles */
+  .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 999;
+  }
 </style>
 
 <!-- Burger Menu Icon -->
 <button class="burger-menu" id="burger-menu">&#9776;</button>
 
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
 <!-- Burger Navigation Menu -->
 <div class="burger-menu-items" id="burger-menu-items">
-    <button class="burger-close-btn" id="burger-close-btn">&times;</button>
+    <div class="categories">
+        <button class="burger-close-btn" id="burger-close-btn">&times;</button>
+    </div>
 
     <a href="/home">Home</a>
     <a href="/about">About</a>
@@ -75,19 +101,29 @@
   const burgerMenu = document.getElementById('burger-menu');
   const burgerMenuItems = document.getElementById('burger-menu-items');
   const burgerCloseBtn = document.getElementById('burger-close-btn');
+  const overlay = document.getElementById('overlay');
 
   // Toggle the burger menu
   burgerMenu.addEventListener('click', () => {
       const isMenuOpen = burgerMenuItems.style.left === '0px';
       if (isMenuOpen) {
           burgerMenuItems.style.left = '-100%'; // Hide burger menu
+          backgroundoverlay.style.display = 'none';  // Hide overlay
       } else {
           burgerMenuItems.style.left = '0px';   // Show burger menu
+          backgroundoverlay.style.display = 'block'; // Show overlay
       }
   });
 
   // Close burger menu when close button is clicked
   burgerCloseBtn.addEventListener('click', () => {
       burgerMenuItems.style.left = '-100%';   // Hide burger menu
+      backgroundoverlay.style.display = 'none';  // Hide overlay
+  });
+
+  // Close menu if the overlay is clicked
+  backgroundoverlay.addEventListener('click', () => {
+      burgerMenuItems.style.left = '-100%';   // Hide burger menu
+      backgroundoverlay.style.display = 'none';  // Hide overlay
   });
 </script>
