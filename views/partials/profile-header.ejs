@@ -24,7 +24,7 @@
   .side-menu {
       position: fixed;
       top: 0;
-      right: -100%; /* Initially off-screen */
+      right: -100%;
       width: 250px;
       height: 100vh;
       background-color: #fff;
@@ -49,7 +49,6 @@
       background-color: #f0f0f0;
   }
 
-  /* Overlay styles */
   .overlay {
       position: fixed;
       top: 0;
@@ -61,7 +60,6 @@
       z-index: 999;
   }
 
-  /* Profile details section at the top of the menu */
   .profile-details {
       display: flex;
       align-items: center;
@@ -79,23 +77,21 @@
       margin-right: 10px;
   }
 
-  .profile-details .user-info {
+  .user-info {
       display: flex;
       flex-direction: column;
-      justify-content: center;
   }
 
-  .profile-details .username {
+  .username {
       font-weight: bold;
       font-size: 14px;
   }
 
-  .profile-details .full-name {
+  .full-name {
       font-size: 12px;
       color: #666;
   }
 
-  /* Close button (X) styling */
   .close-btn {
       position: absolute;
       top: 5px;
@@ -108,65 +104,61 @@
   }
 
   .close-btn:hover {
-      color: #f00; /* Red color on hover */
+      color: #f00;
   }
 </style>
 
-<!-- Profile Picture and Menu Trigger -->
+<!-- Profile Picture -->
 <div class="profile-header">
-    <img src="<%= user.profilePicture %>" alt="<%= user.username %>'s profile picture" class="profile-picture" id="profile-picture">
+  <img src="<%= user.profilePicture %>" alt="<%= user.username %>'s profile picture" class="profile-picture" id="profile-picture">
 </div>
 
-<!-- Sliding Menu -->
+<!-- Side Menu -->
 <div class="side-menu" id="side-menu">
-    <!-- Profile Info Section -->
-    <div class="profile-details">
-        <img src="<%= user.profilePicture %>" alt="<%= user.username %>'s profile picture">
-        <div class="user-info">
-            <div class="username"><%= user.username %></div>
-            <div class="full-name"><%= user.name %></div>
-        </div>
-        <!-- Close Button (X) -->
-        <button class="close-btn" id="close-btn">&times;</button>
+  <div class="profile-details">
+    <img src="<%= user.profilePicture %>" alt="<%= user.username %>'s profile picture">
+    <div class="user-info">
+      <div class="username"><%= user.username %></div>
+      <div class="full-name"><%= user.name %></div>
     </div>
-
-    <!-- Navigation Links -->
-    <a href="/profile/<%= user.username %>">View Profile</a>
-    <a href="/edit-profile">Settings</a>
-    <a href="/logout">Logout</a>
+    <button class="close-btn" id="close-btn">&times;</button>
+  </div>
+  <a href="/profile/<%= user.username %>">View Profile</a>
+  <a href="/edit-profile">Settings</a>
+  <a href="/logout">Logout</a>
 </div>
 
-<!-- Overlay (Dim the background when the menu is open) -->
+<!-- Overlay -->
 <div class="overlay" id="overlay"></div>
 
+<!-- Script (make sure this is after the HTML or use defer if external) -->
 <script>
-  // Get the profile picture, side menu, overlay, and close button elements
-  const profilePicture = document.getElementById('profile-picture');
-  const sideMenu = document.getElementById('side-menu');
-  const overlay = document.getElementById('overlay');
-  const closeButton = document.getElementById('close-btn');
+  document.addEventListener('DOMContentLoaded', () => {
+    const profilePicture = document.getElementById('profile-picture');
+    const sideMenu = document.getElementById('side-menu');
+    const overlay = document.getElementById('overlay');
+    const closeButton = document.getElementById('close-btn');
 
-  // Toggle the side menu when the profile picture is clicked
-  profilePicture.addEventListener('click', () => {
-      const isMenuOpen = sideMenu.style.right === '0px';
-      if (isMenuOpen) {
-          sideMenu.style.right = '-100%'; // Hide menu (completely off-screen)
-          overlay.style.display = 'none';  // Hide overlay
+    function openMenu() {
+      sideMenu.style.right = '0';
+      overlay.style.display = 'block';
+    }
+
+    function closeMenu() {
+      sideMenu.style.right = '-100%';
+      overlay.style.display = 'none';
+    }
+
+    profilePicture.addEventListener('click', () => {
+      const isOpen = sideMenu.style.right === '0px' || getComputedStyle(sideMenu).right === '0px';
+      if (isOpen) {
+        closeMenu();
       } else {
-          sideMenu.style.right = '0px';   // Show menu
-          overlay.style.display = 'block'; // Show overlay
+        openMenu();
       }
-  });
+    });
 
-  // Close the menu if the overlay is clicked
-  overlay.addEventListener('click', () => {
-      sideMenu.style.right = '-100%'; // Hide menu (completely off-screen)
-      overlay.style.display = 'none';  // Hide overlay
-  });
-
-  // Close the menu if the close button (X) is clicked
-  closeButton.addEventListener('click', () => {
-      sideMenu.style.right = '-100%'; // Hide menu (completely off-screen)
-      overlay.style.display = 'none';  // Hide overlay
+    closeButton.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
   });
 </script>

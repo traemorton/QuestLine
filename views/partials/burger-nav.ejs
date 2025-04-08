@@ -15,7 +15,7 @@
   .burger-menu-items {
       position: fixed;
       top: 0;
-      left: -100%; /* Initially off-screen */
+      left: -100%;
       width: 250px;
       height: 100vh;
       background-color: #fff;
@@ -47,9 +47,9 @@
       padding-bottom: 10px;
       border-bottom: 1px solid #ccc;
       position: relative;
-  } 
+  }
 
-  /* Close the burger menu */
+  /* Close button */
   .burger-close-btn {
       position: absolute;
       top: 10px;
@@ -62,10 +62,10 @@
   }
 
   .burger-close-btn:hover {
-      color: #f00; /* Red color on hover */
+      color: #f00;
   }
 
-  /* Overlay styles */
+  /* Overlay */
   .overlay {
       position: fixed;
       top: 0;
@@ -86,44 +86,40 @@
 
 <!-- Burger Navigation Menu -->
 <div class="burger-menu-items" id="burger-menu-items">
-    <div class="categories">
-        <button class="burger-close-btn" id="burger-close-btn">&times;</button>
-    </div>
+  <div class="categories">
+    <button class="burger-close-btn" id="burger-close-btn">&times;</button>
+  </div>
 
-    <a href="/home">Home</a>
-    <a href="/about">About</a>
-    <a href="/contact">Contact</a>
-    <a href="/services">Services</a>
+  <a href="/home">Home</a>
+  <a href="/about">About</a>
+  <a href="/contact">Contact</a>
+  <a href="/services">Services</a>
 </div>
 
+<!-- JS -->
 <script>
-  // Burger Menu Logic
-  const burgerMenu = document.getElementById('burger-menu');
-  const burgerMenuItems = document.getElementById('burger-menu-items');
-  const burgerCloseBtn = document.getElementById('burger-close-btn');
-  const overlay = document.getElementById('overlay');
+  document.addEventListener('DOMContentLoaded', () => {
+    const burgerMenu = document.getElementById('burger-menu');
+    const burgerMenuItems = document.getElementById('burger-menu-items');
+    const burgerCloseBtn = document.getElementById('burger-close-btn');
+    const overlay = document.getElementById('overlay');
 
-  // Toggle the burger menu
-  burgerMenu.addEventListener('click', () => {
-      const isMenuOpen = burgerMenuItems.style.left === '0px';
-      if (isMenuOpen) {
-          burgerMenuItems.style.left = '-100%'; // Hide burger menu
-          backgroundoverlay.style.display = 'none';  // Hide overlay
-      } else {
-          burgerMenuItems.style.left = '0px';   // Show burger menu
-          backgroundoverlay.style.display = 'block'; // Show overlay
-      }
-  });
+    function openBurgerMenu() {
+      burgerMenuItems.style.left = '0';
+      overlay.style.display = 'block';
+    }
 
-  // Close burger menu when close button is clicked
-  burgerCloseBtn.addEventListener('click', () => {
-      burgerMenuItems.style.left = '-100%';   // Hide burger menu
-      backgroundoverlay.style.display = 'none';  // Hide overlay
-  });
+    function closeBurgerMenu() {
+      burgerMenuItems.style.left = '-100%';
+      overlay.style.display = 'none';
+    }
 
-  // Close menu if the overlay is clicked
-  backgroundoverlay.addEventListener('click', () => {
-      burgerMenuItems.style.left = '-100%';   // Hide burger menu
-      backgroundoverlay.style.display = 'none';  // Hide overlay
+    burgerMenu.addEventListener('click', () => {
+      const isOpen = getComputedStyle(burgerMenuItems).left === '0px';
+      isOpen ? closeBurgerMenu() : openBurgerMenu();
+    });
+
+    burgerCloseBtn.addEventListener('click', closeBurgerMenu);
+    overlay.addEventListener('click', closeBurgerMenu);
   });
 </script>
