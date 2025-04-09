@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Group</title>
+</head>
+<body>
+    <h1>Create a New Group</h1>
+    <form action="/groups" method="POST">
+        <label for="name">Group Name:</label>
+        <input type="text" name="name" required><br><br>
+
+        <label for="description">Description:</label><br>
+        <textarea name="description" rows="4" cols="50"></textarea><br><br>
+
+        <button type="submit">Create Group</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Groups</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- optional styling -->
+</head>
+<body>
+    <div style="margin-bottom: 20px;">
+        <a href="/groups/new" class="btn btn-primary">Create New Group</a>
+    </div>
+    <div class="container">
+        <h1>Groups</h1>
+
+        <% if (groups.length === 0) { %>
+            <p>No groups found.</p>
+        <% } else { %>
+            <ul class="group-list">
+                <% groups.forEach(group => { %>
+                    <li class="group-item">
+                        <h2><%= group.name %></h2>
+                        <p><%= group.description %></p>
+
+                        <% const isMember = group.members.some(member => member._id.toString() === currentUser._id.toString()); %>
+
+                        <% if (!isMember) { %>
+                            <form action="/groups/<%= group._id %>/join" method="POST">
+                                <button type="submit">Join Group</button>
+                            </form>
+                        <% } else { %>
+                            <p class="member-note">✅ You are a member</p>
+                        <% } %>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } %>
+    </div>
+</body>
+</html>

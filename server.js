@@ -3,6 +3,8 @@ const { Server } = require('socket.io');
 const mongoose = require('mongoose');
 const express = require('express');
 const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const MongoStore = require('connect-mongo');
 
@@ -25,9 +27,37 @@ app.use(session({
     secret: 'my_secret_key',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/my_database' }),
+    store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/my_database' }), // Store session in MongoDB
     cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Local strategy
+passport.use(new LocalStrategy(
+    async (username, password, done) => {
+        const user = await User.findOne({ username });
+        if (!user) return done(null, false);
+        const isMatch = await bcrypt.compare(password, user.password); // Use bcrypt.compare
+        return isMatch ? done(null, user) : done(null, false);
+    }
+));
+
+passport.serializeUser((user, done) => {
+    done(null, user.id);  // user.id is the unique identifier of the user
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (error) {
+        done(error);
+    }
+});
+
 
 // Middleware to set isAuthenticated for all views
 app.use((req, res, next) => {
@@ -110,7 +140,6 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-
 // Login Route
 app.get('/login', (req, res) => {
     res.render('login', { errorMessage: '' });
@@ -135,14 +164,15 @@ app.post('/login', async (req, res) => {
         user.onlineStatus = true;
         await user.save();
 
-        req.session.userId = user._id;
+        req.session.userId = user._id; // Make sure session is set correctly
+        req.user = user; // Attach user to the request object
+
         res.redirect('/dashboard');
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).send('Error logging in user');
     }
 });
-
 
 // Dashboard Route (Protected)
 app.get('/dashboard', isAuthenticated, async (req, res) => {
@@ -217,6 +247,51 @@ app.get('/profile/:username', async (req, res) => {
         res.status(500).send('Error fetching profile');
     }
 });
+
+// Groups page
+const Group = require('./models/Group');
+app.get('/groups', async (req, res) => {
+    try {
+        const groups = await Group.find().populate('owner');
+        res.render('groups', { groups });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error loading groups");
+    }
+});
+
+function isAuthenticated(req, res, next) {
+    if (req.session.userId) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
+// Protect the route for creating a new group
+app.get('/groups/new', isAuthenticated, (req, res) => {
+    res.render('groups/new');
+});
+
+// Group creation route
+app.post('/groups', isAuthenticated, async (req, res) => {
+    const { name, description } = req.body;
+
+    try {
+        const newGroup = new Group({
+            name,
+            description,
+            owner: req.user._id,  // Use req.user, which is set after login
+            members: [req.user._id],
+        });
+
+        await newGroup.save();
+        res.redirect('/groups');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
 
 // Logout Route
 app.get('/logout', async (req, res) => {
