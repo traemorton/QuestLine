@@ -303,6 +303,23 @@ app.post('/groups', isAuthenticated, async (req, res) => {
     }
 });
 
+// View specific group
+app.get('/groups/:groupId', isAuthenticated, async (req, res) => {
+    // const group = await Group.findById(req.params.groupId);
+    // if (!group) return res.status(404).send('Group not found');
+    // res.render('groups/show', { group });
+    try {
+        const group = await Group.findById(req.params.groupId).populate('members', 'name username');
+
+        res.render('groups/show', { 
+            group: group
+        });
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.redirect('/login');
+    }
+});
+
 // Group Joining
 app.post('/groups/:groupId/join', isAuthenticated, async (req, res) => {
     try {
