@@ -94,12 +94,27 @@
         <img src="<%= user.profilePicture %>" alt="Profile Picture" class="profile-pic">
         <p class="info"><strong>Username:</strong> <%= user.username %></p>
         <p class="info"><strong>Email:</strong> <%= user.email %></p>
+        <p class="info"><strong>UUID:</strong> <%= user.uuid %></p>
         <p class="info"><strong>Bio:</strong> <%= user.bio || 'No bio available' %></p>
         <p class="info"><strong>Role:</strong> <%= user.role %></p>
         <p class="info"><strong>Location:</strong> <%= user.location %></p>
         <p class="info"><strong>Online Status:</strong> <%= user.onlineStatus ? 'Online' : 'Offline' %></p>
         <p class="info"><strong>Last Login:</strong> <%= new Date(user.lastLogin).toLocaleString() %></p>
         <p class="info"><strong>Preferences:</strong> Theme - <%= user.preferences.theme %>, Notifications - <%= user.preferences.notifications ? 'Enabled' : 'Disabled' %></p>
+
+        <h2>Your Groups:</h2>
+        <% if (groups.length > 0) { %>
+            <ul>
+                <% groups.forEach(group => { %>
+                    <li>
+                        <a href="/groups/<%= group._id %>"><%= group.name %></a> - <%= group.description %>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>You are not a member of any groups.</p>
+        <% } %>
+
         <a href="/edit-profile" class="btn">Edit Profile</a>
         <a href="/logout" class="logout-btn">Logout</a>
     </div>

@@ -12,6 +12,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+const User = require('./models/User');
+const Group = require('./models/Group');
+
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.json());
@@ -58,7 +61,6 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-
 // Middleware to set isAuthenticated for all views
 app.use((req, res, next) => {
     res.locals.isAuthenticated = !!req.session.userId; // true if user is logged in, false otherwise
@@ -73,11 +75,9 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true }
 }, { timestamps: true });
 
-const User = require('./models/User');
-
 // Authentication Middleware
 function isAuthenticated(req, res, next) {
-    if (req.session.userId) {
+    if (req.user || req.session.userId) { // Check if user is authenticated through session or Passport
         return next();
     }
     res.redirect('/login');
@@ -180,11 +180,16 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/login');
 
+        const groups = await Group.find({
+            members: { $in: [user._id] } // Find groups that have the user as a member
+        });
+
         res.render('dashboard', { 
             user: {
                 name: user.name,
                 username: user.username,
                 email: user.email,
+                uuid: user._id,
                 profilePicture: user.profilePicture,
                 bio: user.bio,
                 role: user.role,
@@ -193,7 +198,8 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
                 lastLogin: user.lastLogin,
                 preferences: user.preferences,
                 isBanned: user.isBanned
-            }
+            },
+            groups: groups
         });
     } catch (error) {
         console.error('Error fetching user:', error);
@@ -249,23 +255,18 @@ app.get('/profile/:username', async (req, res) => {
 });
 
 // Groups page
-const Group = require('./models/Group');
 app.get('/groups', async (req, res) => {
     try {
-        const groups = await Group.find().populate('owner');
-        res.render('groups', { groups });
+        const groups = await Group.find().populate('owner').populate('members');
+        const user = await User.findById(req.session.userId);
+        console.log('Current User:', user);  // Debug line to check if user is set
+        res.render('groups', { groups, currentUser: user });
     } catch (err) {
         console.error(err);
         res.status(500).send("Error loading groups");
     }
 });
 
-function isAuthenticated(req, res, next) {
-    if (req.session.userId) {
-        return next();
-    }
-    res.redirect('/login');
-}
 
 // Protect the route for creating a new group
 app.get('/groups/new', isAuthenticated, (req, res) => {
@@ -277,18 +278,80 @@ app.post('/groups', isAuthenticated, async (req, res) => {
     const { name, description } = req.body;
 
     try {
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login');
+
+        // Create new group
         const newGroup = new Group({
             name,
             description,
-            owner: req.user._id,  // Use req.user, which is set after login
-            members: [req.user._id],
+            owner: user._id,
+            members: [user._id],
         });
 
-        await newGroup.save();
+        await newGroup.save(); // Save the new group to the database
+
+        // Fetch the updated list of groups to render the page with the new group
+        const groups = await Group.find().populate('owner').populate('members');
+        
+        // Render the updated groups page
+        res.render('groups', { groups, currentUser: req.user });
+
+    } catch (error) {
+        console.error('Error creating group:', error);
         res.redirect('/groups');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
+    }
+});
+
+// Group Joining
+app.post('/groups/:groupId/join', isAuthenticated, async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login'); // Ensure user is logged in
+
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).send('Group not found');
+        }
+
+        // Check if the user is already a member of the group
+        if (group.members.some(member => member._id.toString() === user._id.toString())) {
+            return res.redirect('/groups'); // Redirect back if already a member
+        }
+
+        // Add the user to the group's members array
+        group.members.push(user._id);
+        await group.save();
+
+        res.redirect('/groups'); // Redirect back to groups page
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error joining group');
+    }
+});
+
+
+// Group Leaving
+app.post('/groups/:groupId/leave', isAuthenticated, async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        //const userId = req.user._id;
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login');
+
+        const group = await Group.findById(groupId);
+        if (!group) {
+            return res.status(404).send('Group not found');
+        }
+
+        group.members = group.members.filter(member => member._id.toString() !== user._id.toString());
+        await group.save();
+
+        res.redirect('/groups');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error leaving group');
     }
 });
 
