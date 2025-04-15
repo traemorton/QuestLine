@@ -1,5 +1,130 @@
-<h1>Discussions</h1>
-<a href="/discussions/new">Start a new discussion</a>
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      padding-top: 50px;
+      background-color: #f0f2f5;
+  }
+
+  .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+  }
+
+  .left-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+  }
+
+  .page-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-left: 10px;
+      margin-top: 8px;
+  }
+
+  .container {
+      padding: 30px;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      border-radius: 8px;
+      max-width: 700px;
+      margin: auto;
+      margin-top: 30px;
+  }
+
+  h2, h3 {
+      color: #333;
+      margin-bottom: 10px;
+  }
+
+  p {
+      color: #555;
+      font-size: 16px;
+      margin-bottom: 8px;
+  }
+
+  ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-bottom: 20px;
+  }
+
+  li {
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: #444;
+  }
+
+  a {
+      text-decoration: none;
+      color: #007bff;
+  }
+
+  a:hover {
+      text-decoration: underline;
+  }
+
+  form {
+      margin-top: 10px;
+  }
+
+  input[type="file"],
+  input[type="date"],
+  select {
+      margin-bottom: 10px;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+  }
+
+  button {
+      padding: 8px 14px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+
+  button:hover {
+      opacity: 70%;
+  }
+
+  section {
+      margin-bottom: 30px;
+  }
+
+  .form-inline label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+  }
+
+</style>
+<div class="topbar">
+  <div class="left-section">
+      <%- include('../partials/burger-nav') %>
+      <span class="page-title">Discussions</span>
+  </div>
+</div>
+<header>
+  <div style="margin-top: 20px; margin-bottom: 20px;">
+    <a href="/discussions/new">Start a new discussion</a>
+  </div>
+</header>
 <ul>
   <% discussions.forEach(d => { %>
     <li><a href="/discussions/<%= d._id %>"><%= d.title %></a> by <%= d.author.username %></li>
