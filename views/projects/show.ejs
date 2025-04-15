@@ -1,9 +1,221 @@
-<h2><%= project.name %></h2>
-<p><%= project.description %></p>
-<p>Owner: <%= project.owner.username %></p>
-<p>Collaborators:</p>
-<ul>
-    <% project.collaborators.forEach(user => { %>
-        <li><%= user.username %></li>
-    <% }); %>
-</ul>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        padding-top: 50px;
+        background-color: #f0f2f5;
+    }
+
+    .topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .left-section {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .page-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-left: 10px;
+        margin-top: 8px;
+    }
+
+    .container {
+        padding: 30px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        border-radius: 8px;
+        max-width: 700px;
+        margin: auto;
+        margin-top: 30px;
+    }
+
+    h2, h3 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #555;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    ul {
+        list-style-type: disc;
+        padding-left: 20px;
+        margin-bottom: 20px;
+    }
+
+    li {
+        font-size: 15px;
+        margin-bottom: 6px;
+        color: #444;
+    }
+
+    a {
+        text-decoration: none;
+        color: #007bff;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    form {
+        margin-top: 10px;
+    }
+
+    input[type="file"],
+    input[type="date"],
+    select {
+        margin-bottom: 10px;
+        padding: 6px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        padding: 8px 14px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        opacity: 70%;
+    }
+
+    section {
+        margin-bottom: 30px;
+    }
+
+    .form-inline label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+</style>
+<div class="topbar">
+    <div class="left-section">
+        <%- include('../partials/burger-nav') %>
+        <span class="page-title">Dashboard</span>
+    </div>
+</div>
+<div class="container">
+    <h2><%= project.name %></h2>
+    <p><%= project.description %></p>
+
+    <!-- Owner Info -->
+    <p><strong>Owner:</strong> <%= project.owner.username %></p>
+
+    <!-- Collaborators -->
+    <section>
+        <h3>Collaborators:</h3>
+        <ul>
+            <% project.collaborators.forEach(user => { %>
+                <li><%= user.username %></li>
+            <% }); %>
+        </ul>
+    </section>
+
+    <!-- Editable Project Details -->
+    <section>
+        <h3>Details</h3>
+        <form method="POST" action="/projects/<%= project._id %>">
+            <div class="form-inline">
+                <label for="status">Status:</label>
+                <select id="status" name="status">
+                    <option value="Not Started" <%= project.status === 'Not Started' ? 'selected' : '' %>>Not Started</option>
+                    <option value="In Progress" <%= project.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                    <option value="Completed" <%= project.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                </select>
+            </div>
+
+            <div class="form-inline">
+                <label for="deadline">Deadline:</label>
+                <input type="date" id="deadline" name="deadline" value="<%= project.deadline ? project.deadline.toISOString().split('T')[0] : '' %>">
+            </div>
+
+            <button type="submit">Save Changes</button>
+        </form>
+
+        <p><strong>Created On:</strong> <%= project.createdAt.toDateString() %></p>
+        <p><strong>Last Updated:</strong> <%= project.updatedAt.toDateString() %></p>
+    </section>
+
+    <!-- Tasks Overview -->
+    <section>
+        <h3>Tasks:</h3>
+        <% if (project.tasks.length > 0) { %>
+            <ul>
+                <% project.tasks.forEach(task => { %>
+                    <li>
+                        <strong><%= task.title %></strong> - <%= task.status %> 
+                        (Assigned to: <%= task.assignedTo?.username || "Unassigned" %>, Due: <%= task.dueDate ? task.dueDate.toDateString() : "No due date" %>)
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No tasks yet.</p>
+        <% } %>
+        <a href="/projects/<%= project._id %>/tasks/new">+ Add Task</a>
+    </section>
+
+    <!-- Files -->
+    <section>
+        <h3>Files:</h3>
+        <% if (project.files && project.files.length > 0) { %>
+            <ul>
+                <% project.files.forEach(file => { %>
+                    <li><a href="/uploads/<%= file.filename %>" target="_blank"><%= file.originalname %></a></li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No files uploaded yet.</p>
+        <% } %>
+        <form action="/projects/<%= project._id %>/files/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" />
+            <button type="submit">Upload File</button>
+        </form>
+    </section>
+
+    <!-- Notes or Documentation -->
+    <section>
+        <h3>Notes:</h3>
+        <p><%= project.notes || "No notes added yet." %></p>
+        <a href="/projects/<%= project._id %>/edit-notes">Edit Notes</a>
+    </section>
+
+    <!-- Activity Feed -->
+    <section>
+        <h3>Recent Activity:</h3>
+        <% if (project.activity && project.activity.length > 0) { %>
+            <ul>
+                <% project.activity.forEach(event => { %>
+                    <li><%= event.message %> - <%= event.timestamp.toLocaleString() %></li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No activity yet.</p>
+        <% } %>
+    </section>
+</div>

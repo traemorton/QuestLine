@@ -397,14 +397,18 @@ app.get('/projects/new', isAuthenticated, (req, res) => {
 // Create Project
 app.post('/projects', isAuthenticated, async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, description, status, deadline, notes } = req.body;
         const owner = req.session.userId;
 
         const project = new Project({
             name,
             description,
+            status: status || 'Planning',
+            deadline: deadline ? new Date(deadline) : undefined,
+            notes,
             owner,
-            collaborators: [owner]
+            collaborators: [owner],
+            activity: [{ message: 'Project created', timestamp: new Date() }]
         });
 
         await project.save();
@@ -420,7 +424,8 @@ app.get('/projects/:projectId', isAuthenticated, async (req, res) => {
     try {
         const project = await Project.findById(req.params.projectId)
             .populate('owner', 'username')
-            .populate('collaborators', 'username');
+            .populate('collaborators', 'username')
+            .populate('tasks.assignedTo', 'username');
 
         if (!project) return res.status(404).send('Project not found');
 
@@ -429,6 +434,16 @@ app.get('/projects/:projectId', isAuthenticated, async (req, res) => {
         console.error('Error loading project:', err);
         res.status(500).send('Error loading project');
     }
+});
+
+// Project POST function
+app.post('/projects/:id', async (req, res) => {
+    const { status, deadline } = req.body;
+    const updateData = { status, updatedAt: new Date() };
+    if (deadline) updateData.deadline = new Date(deadline);
+
+    await Project.findByIdAndUpdate(req.params.id, updateData);
+    res.redirect(`/projects/${req.params.id}`);
 });
 
 // Discussions
