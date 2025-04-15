@@ -1,0 +1,9 @@
+<h2><%= project.name %></h2>
+<p><%= project.description %></p>
+<p>Owner: <%= project.owner.username %></p>
+<p>Collaborators:</p>
+<ul>
+    <% project.collaborators.forEach(user => { %>
+        <li><%= user.username %></li>
+    <% }); %>
+</ul>

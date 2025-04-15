@@ -14,6 +14,7 @@ const io = new Server(server);
 
 const User = require('./models/User');
 const Group = require('./models/Group');
+const Project = require('./models/Project');
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -183,6 +184,9 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
         const groups = await Group.find({
             members: { $in: [user._id] } // Find groups that have the user as a member
         });
+        const projects = await Project.find({
+            collaborators: { $in: [user._id] }
+        });
 
         res.render('dashboard', { 
             user: {
@@ -199,7 +203,8 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
                 preferences: user.preferences,
                 isBanned: user.isBanned
             },
-            groups: groups
+            groups: groups,
+            projects: projects
         });
     } catch (error) {
         console.error('Error fetching user:', error);
@@ -369,6 +374,59 @@ app.post('/groups/:groupId/leave', isAuthenticated, async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Error leaving group');
+    }
+});
+
+// Projects Page
+app.get('/projects', isAuthenticated, async (req, res) => {
+    try {
+        const projects = await Project.find().populate('owner');
+        res.render('projects', { projects });
+    } catch (err) {
+        console.error('Error loading projects:', err);
+        res.status(500).send('Error loading projects');
+    }
+});
+
+// New Project Form
+app.get('/projects/new', isAuthenticated, (req, res) => {
+    res.render('projects/new');
+});
+
+// Create Project
+app.post('/projects', isAuthenticated, async (req, res) => {
+    try {
+        const { name, description } = req.body;
+        const owner = req.session.userId;
+
+        const project = new Project({
+            name,
+            description,
+            owner,
+            collaborators: [owner]
+        });
+
+        await project.save();
+        res.redirect('/projects');
+    } catch (err) {
+        console.error('Error creating project:', err);
+        res.status(500).send('Error creating project');
+    }
+});
+
+// View specific project
+app.get('/projects/:projectId', isAuthenticated, async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.projectId)
+            .populate('owner', 'username')
+            .populate('collaborators', 'username');
+
+        if (!project) return res.status(404).send('Project not found');
+
+        res.render('projects/show', { project });
+    } catch (err) {
+        console.error('Error loading project:', err);
+        res.status(500).send('Error loading project');
     }
 });
 

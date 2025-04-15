@@ -112,6 +112,18 @@
         <% } else { %>
             <p>You are not a member of any groups.</p>
         <% } %>
+        <h2>Your Projects:</h2>
+        <% if (projects.length > 0) { %>
+            <ul>
+                <% projects.forEach(project => { %>
+                    <li>
+                        <a href="/projects/<%= project._id %>"><%= project.name %></a> - <%= project.description %>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>You are not a collaborator on any projects.</p>
+        <% } %>
 
         <a href="/edit-profile" class="btn">Edit Profile</a>
         <a href="/logout" class="logout-btn">Logout</a>
