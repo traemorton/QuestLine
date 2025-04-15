@@ -15,6 +15,7 @@ const io = new Server(server);
 const User = require('./models/User');
 const Group = require('./models/Group');
 const Project = require('./models/Project');
+const Discussion = require('./models/Discussion');
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -430,6 +431,74 @@ app.get('/projects/:projectId', isAuthenticated, async (req, res) => {
     }
 });
 
+// Discussions
+app.get('/discussions', async (req, res) => {
+    try {
+        const discussions = await Discussion.find().populate('author');
+        res.render('discussions/index', { discussions });
+    } catch (error) {
+        console.error('Error fetching discussions:', error);
+        res.status(500).send('Error loading discussions');
+    }
+});
+
+app.get('/discussions/new', isAuthenticated, (req, res) => {
+    res.render('discussions/new', { errorMessage: '' });
+});
+
+// Create Discussion
+app.post('/discussions', isAuthenticated, async (req, res) => {
+    const { title, content } = req.body;
+    try {
+        const newDiscussion = new Discussion({
+            title,
+            content,
+            author: req.session.userId
+        });
+
+        await newDiscussion.save();
+        res.redirect('/discussions');
+    } catch (err) {
+        console.error('Error creating discussion:', err);
+        res.render('discussions/new', { errorMessage: 'Failed to create discussion' });
+    }
+});
+
+// View Discussion
+app.get('/discussions/:id', async (req, res) => {
+    try {
+        const discussion = await Discussion.findById(req.params.id)
+            .populate('author')
+            .populate('comments.author');
+
+        if (!discussion) return res.status(404).send('Discussion not found');
+        res.render('discussions/show', { discussion });
+    } catch (error) {
+        console.error('Error fetching discussion:', error);
+        res.status(500).send('Error loading discussion');
+    }
+});
+
+// Comment Route
+app.post('/discussions/:id/comments', isAuthenticated, async (req, res) => {
+    const { comment } = req.body;
+
+    try {
+        const discussion = await Discussion.findById(req.params.id);
+        if (!discussion) return res.status(404).send('Discussion not found');
+
+        discussion.comments.push({
+            content: comment,
+            author: req.session.userId
+        });
+
+        await discussion.save();
+        res.redirect(`/discussions/${discussion._id}`);
+    } catch (err) {
+        console.error('Error adding comment:', err);
+        res.status(500).send('Failed to add comment');
+    }
+});
 
 // Logout Route
 app.get('/logout', async (req, res) => {

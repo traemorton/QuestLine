@@ -1,0 +1,7 @@
+<h1>Discussions</h1>
+<a href="/discussions/new">Start a new discussion</a>
+<ul>
+  <% discussions.forEach(d => { %>
+    <li><a href="/discussions/<%= d._id %>"><%= d.title %></a> by <%= d.author.username %></li>
+  <% }) %>
+</ul>

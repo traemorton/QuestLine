@@ -1,0 +1,15 @@
+<h1><%= discussion.title %></h1>
+<p><%= discussion.content %></p>
+<p>Posted by <%= discussion.author.username %> at <%= discussion.createdAt.toLocaleString() %></p>
+
+<h3>Comments</h3>
+<ul>
+  <% discussion.comments.forEach(c => { %>
+    <li><strong><%= c.author?.username || 'Unknown' %>:</strong> <%= c.content %> (<%= c.createdAt.toLocaleString() %>)</li>
+  <% }) %>
+</ul>
+
+<form action="/discussions/<%= discussion._id %>/comments" method="POST">
+  <textarea name="comment" required></textarea>
+  <button type="submit">Add Comment</button>
+</form>
