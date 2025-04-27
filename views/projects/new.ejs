@@ -1,8 +1,33 @@
-<h2>Create New Project</h2>
 <form action="/projects" method="POST">
-    <label>Name:</label><br />
-    <input type="text" name="name" required><br /><br />
-    <label>Description:</label><br />
-    <textarea name="description"></textarea><br /><br />
+    <label for="name">Project Name:</label>
+    <input type="text" name="name" required><br><br>
+
+    <label for="description">Description:</label><br>
+    <textarea name="description" rows="4" cols="50"></textarea><br><br>
+
+    <label for="status">Status:</label>
+    <select name="status">
+        <option value="Planning">Planning</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="On Hold">On Hold</option>
+    </select><br><br>
+
+    <label for="deadline">Deadline:</label>
+    <input type="date" name="deadline"><br><br>
+
+    <label for="notes">Notes:</label><br>
+    <textarea name="notes" rows="4" cols="50"></textarea><br><br>
+
+    <!-- New: Group Selection -->
+    <label for="group">Assign to Group:</label>
+    <select name="group">
+        <option value="">-- None --</option>
+        <!-- Dynamically fill with user's groups -->
+        <% groups.forEach(group => { %>
+            <option value="<%= group._id %>"><%= group.name %></option>
+        <% }) %>
+    </select><br><br>
+
     <button type="submit">Create Project</button>
 </form>

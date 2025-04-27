@@ -390,15 +390,31 @@ app.get('/projects', isAuthenticated, async (req, res) => {
 });
 
 // New Project Form
-app.get('/projects/new', isAuthenticated, (req, res) => {
-    res.render('projects/new');
+app.get('/projects/new', isAuthenticated, async (req, res) => {
+    try {
+        const userGroups = await Group.find({ members: req.session.userId });
+        res.render('projects/new', { groups: userGroups }); // ✅ pass groups
+    } catch (err) {
+        console.error('Error loading groups for project creation:', err);
+        res.status(500).send('Error loading project creation form');
+    }
 });
 
 // Create Project
 app.post('/projects', isAuthenticated, async (req, res) => {
     try {
-        const { name, description, status, deadline, notes } = req.body;
+        const { name, description, status, deadline, notes, group } = req.body;
         const owner = req.session.userId;
+
+        let collaborators = [owner]; // Default: owner only
+
+        // If a group is selected, use its members
+        if (group) {
+            const groupData = await Group.findById(group).populate('members');
+            if (groupData) {
+                collaborators = groupData.members.map(member => member._id);
+            }
+        }
 
         const project = new Project({
             name,
@@ -407,7 +423,7 @@ app.post('/projects', isAuthenticated, async (req, res) => {
             deadline: deadline ? new Date(deadline) : undefined,
             notes,
             owner,
-            collaborators: [owner],
+            collaborators,
             activity: [{ message: 'Project created', timestamp: new Date() }]
         });
 
