@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Task</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Make sure you have your dark mode CSS linked -->
+</head>
+<body>
+    <h1>Create New Task</h1>
+
+    <form action="/projects/<%= projectId %>/tasks" method="POST">
+        <label for="title">Task Title:</label>
+        <input type="text" id="title" name="title" placeholder="Enter task title" required>
+
+        <label for="description">Task Description:</label>
+        <textarea id="description" name="description" placeholder="Enter task description"></textarea>
+
+        <label for="dueDate">Due Date:</label>
+        <input type="date" id="dueDate" name="dueDate">
+
+        <label for="assignedTo">Assign To:</label>
+        <select id="assignedTo" name="assignedTo">
+            <option value="">-- Select Collaborator --</option>
+            <% collaborators.forEach(user => { %>
+                <option value="<%= user._id %>"><%= user.name %></option>
+            <% }) %>
+        </select>
+
+        <button type="submit">Create Task</button>
+    </form>
+
+    <br>
+    <a href="/projects/<%= projectId %>">Back to Project</a>
+</body>
+</html>

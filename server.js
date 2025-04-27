@@ -462,6 +462,82 @@ app.post('/projects/:id', async (req, res) => {
     res.redirect(`/projects/${req.params.id}`);
 });
 
+app.post('/projects/:projectId/tasks', async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const { title, description, dueDate, assignedTo } = req.body;
+
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).send('Project not found');
+        }
+
+        // Create a new task object
+        const newTask = {
+            title,
+            description,
+            dueDate,
+            assignedTo: assignedTo || null // in case no one is assigned
+        };
+
+        // Push the new task into the project's tasks array
+        project.tasks.push(newTask);
+
+        // Update updatedAt field
+        project.updatedAt = Date.now();
+
+        // Save the project
+        await project.save();
+
+        res.redirect(`/projects/${projectId}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server error creating task');
+    }
+});
+
+// Show form to create new task
+app.get('/projects/:projectId/tasks/new', isAuthenticated, async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.projectId).populate('collaborators');
+        if (!project) return res.status(404).send('Project not found');
+
+        res.render('tasks/new', {
+            projectId: project._id,
+            collaborators: project.collaborators
+        });
+    } catch (err) {
+        console.error('Error showing new task form:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+// Task detail page
+app.get('/projects/:projectId/tasks/:taskId', async (req, res) => {
+    const { projectId, taskId } = req.params;
+    try {
+        const project = await Project.findById(projectId)
+            .populate('owner')
+            .populate('collaborators')
+            .populate('tasks.assignedTo');
+
+        if (!project) {
+            return res.status(404).send('Project not found.');
+        }
+
+        const task = project.tasks.id(taskId);
+
+        if (!task) {
+            return res.status(404).send('Task not found.');
+        }
+
+        res.render('tasks/show', { project, task });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Discussions
 app.get('/discussions', async (req, res) => {
     try {

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= task.title %> - Task Details</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="topbar">
+        <div class="left-section">
+            <%- include('../partials/burger-nav') %>
+            <span class="page-title">Task Details</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2><%= task.title %></h2>
+
+        <p><strong>Description:</strong> <%= task.description || "No description provided." %></p>
+
+        <p><strong>Status:</strong> <%= task.status %></p>
+
+        <p><strong>Assigned To:</strong> <%= task.assignedTo ? task.assignedTo.username : "Unassigned" %></p>
+
+        <p><strong>Due Date:</strong> <%= task.dueDate ? task.dueDate.toDateString() : "No due date" %></p>
+
+        <p><strong>Project:</strong> <a href="/projects/<%= project._id %>"><%= project.name %></a></p>
+
+        <br>
+        <a href="/projects/<%= project._id %>">← Back to Project</a>
+    </div>
+</body>
+</html>
