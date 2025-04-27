@@ -538,6 +538,51 @@ app.get('/projects/:projectId/tasks/:taskId', async (req, res) => {
     }
 });
 
+// Edit Task
+app.post('/projects/:projectId/tasks/:taskId/edit', async (req, res) => {
+    try {
+        const { title, description, dueDate, status } = req.body;
+        const { projectId, taskId } = req.params;
+
+        // Find the project and update the task in the tasks array
+        const project = await Project.findById(projectId);
+        const task = project.tasks.id(taskId);
+
+        // Update task details
+        task.title = title || task.title;
+        task.description = description || task.description;
+        task.dueDate = dueDate ? new Date(dueDate) : task.dueDate;
+        task.status = status || task.status;
+
+        await project.save();  // Save the updated project
+
+        // Redirect to the project page or task details page
+        res.redirect(`/projects/${projectId}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Delete Task
+app.post('/projects/:projectId/tasks/:taskId/delete', async (req, res) => {
+    try {
+        const { projectId, taskId } = req.params;
+
+        // Find the project and pull the task from the tasks array
+        const project = await Project.findById(projectId);
+        project.tasks.pull({ _id: taskId });  // Use pull to remove the task by its ID
+
+        await project.save();  // Save the updated project
+
+        // Redirect back to the project page
+        res.redirect(`/projects/${projectId}`);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Discussions
 app.get('/discussions', async (req, res) => {
     try {

@@ -16,15 +16,45 @@
     <div class="container">
         <h2><%= task.title %></h2>
 
-        <p><strong>Description:</strong> <%= task.description || "No description provided." %></p>
+    <!-- Edit Form -->
+    <form action="/projects/<%= project._id %>/tasks/<%= task._id %>/edit" method="POST">
+        <div>
+            <label for="title">Title:</label>
+            <input type="text" name="title" id="title" value="<%= task.title %>" required>
+        </div>
 
+        <div>
+            <label for="description">Description:</label>
+            <textarea name="description" id="description"><%= task.description || '' %></textarea>
+        </div>
+
+        <div>
+            <label for="dueDate">Due Date:</label>
+            <input type="date" name="dueDate" id="dueDate" value="<%= new Date(task.dueDate).toISOString().split('T')[0] %>">
+        </div>
+
+        <div>
+            <label for="status">Status:</label>
+            <select name="status" id="status">
+                <option value="Not Started" <%= task.status === 'Not Started' ? 'selected' : '' %>>Not Started</option>
+                <option value="In Progress" <%= task.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                <option value="Completed" <%= task.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+            </select>
+        </div>
+
+        <button type="submit">Save Changes</button>
+    </form>
+
+        <!-- Task Info -->
         <p><strong>Status:</strong> <%= task.status %></p>
-
         <p><strong>Assigned To:</strong> <%= task.assignedTo ? task.assignedTo.username : "Unassigned" %></p>
-
-        <p><strong>Due Date:</strong> <%= task.dueDate ? task.dueDate.toDateString() : "No due date" %></p>
-
+        <p><strong>Due Date:</strong> <%= task.dueDate ? new Date(task.dueDate).toDateString() : "No due date" %></p>
         <p><strong>Project:</strong> <a href="/projects/<%= project._id %>"><%= project.name %></a></p>
+
+        <!-- Delete Form -->
+        <form action="/projects/<%= project._id %>/tasks/<%= task._id %>/delete" method="POST" style="margin-top: 20px;">
+            <button type="submit" style="background-color: red; color: white;">Delete Task</button>
+        </form>
 
         <br>
         <a href="/projects/<%= project._id %>">← Back to Project</a>
