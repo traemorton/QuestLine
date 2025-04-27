@@ -19,6 +19,7 @@ const UserSchema = new mongoose.Schema({
     location: { type: String, default: 'Unknown' },
     onlineStatus: { type: Boolean, default: false },
     groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }], // References to groups they are part of
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project '}],
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Friend' }], // Friend list
     lastLogin: { type: Date, default: Date.now }, // Last login timestamp
     accountCreated: { type: Date, default: Date.now }, // Account creation date

@@ -7,6 +7,12 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const MongoStore = require('connect-mongo');
+require('dotenv').config();
+const openaiApiKey = process.env.OPENAI_API_KEY;
+const { OpenAI } = require('openai');
+const openai = new OpenAI({
+    apiKey: openaiApiKey, // Hidden API Key
+});
 
 const app = express();
 const server = http.createServer(app);
@@ -182,14 +188,10 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
         const user = await User.findById(req.session.userId);
         if (!user) return res.redirect('/login');
 
-        const groups = await Group.find({
-            members: { $in: [user._id] } // Find groups that have the user as a member
-        });
-        const projects = await Project.find({
-            collaborators: { $in: [user._id] }
-        });
+        const groups = await Group.find({ members: { $in: [user._id] } });
+        const projects = await Project.find({ collaborators: { $in: [user._id] } });
 
-        res.render('dashboard', { 
+        res.render('dashboard', {
             user: {
                 name: user.name,
                 username: user.username,
@@ -202,7 +204,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
                 onlineStatus: user.onlineStatus,
                 lastLogin: user.lastLogin,
                 preferences: user.preferences,
-                isBanned: user.isBanned
+                isBanned: user.isBanned,
             },
             groups: groups,
             projects: projects
@@ -413,6 +415,9 @@ app.post('/projects', isAuthenticated, async (req, res) => {
             const groupData = await Group.findById(group).populate('members');
             if (groupData) {
                 collaborators = groupData.members.map(member => member._id);
+            } else {
+                // If group doesn't exist, handle the error
+                return res.status(400).send('Invalid group selected.');
             }
         }
 
@@ -428,7 +433,7 @@ app.post('/projects', isAuthenticated, async (req, res) => {
         });
 
         await project.save();
-        res.redirect('/projects');
+        res.redirect('/projects'); // Redirect to projects page after saving
     } catch (err) {
         console.error('Error creating project:', err);
         res.status(500).send('Error creating project');
@@ -649,6 +654,37 @@ app.post('/discussions/:id/comments', isAuthenticated, async (req, res) => {
     } catch (err) {
         console.error('Error adding comment:', err);
         res.status(500).send('Failed to add comment');
+    }
+});
+
+// OpenAI Text Generation Route
+app.post('/openai/generate', async (req, res) => {
+    const { prompt, maxTokens, temperature, model } = req.body; // Allow these inputs from the client
+
+    if (!prompt) {
+        return res.status(400).json({ error: 'No prompt provided' });
+    }
+
+    // Set default values for parameters if they're not provided
+    const modelToUse = model || 'davinci-002';  // Use GPT-3.5-turbo by default
+    const maxTokensToUse = maxTokens || 150; // Set a default max token limit
+    const temperatureToUse = temperature || 0.7; // Default temperature (for randomness)
+
+    try {
+        // Call the OpenAI API with the dynamic values
+        const response = await openai.completions.create({
+            model: modelToUse,
+            prompt: prompt,
+            max_tokens: maxTokensToUse, 
+            temperature: temperatureToUse,
+            messages: [{ role: "user", content: prompt }],
+        });
+
+        // Send the response from OpenAI
+        res.json({ response: response.choices[0].text.trim() });
+    } catch (error) {
+        console.error('Error interacting with OpenAI:', error);
+        res.status(500).json({ error: 'Error generating response' });
     }
 });
 

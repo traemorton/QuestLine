@@ -7,46 +7,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
-            padding-top: 50px;
-        }
-        h1 {
-            color: #333;
-        }
-        .container {
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            max-width: 500px;
-            margin: auto;
-            text-align: center;
-        }
-        .profile-pic {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-        .info {
-            margin-top: 10px;
-            font-size: 18px;
-            color: #555;
-        }
-        .logout-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            color: white;
-            background-color: #dc3545;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .logout-btn:hover {
-            background-color: #c82333;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
         }
         .topbar {
             position: fixed;
@@ -62,13 +27,11 @@
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
-        /* New Left Section (Burger + Page Title) */
         .left-section {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        /* Fix title alignment */
         .page-title {
             font-size: 18px;
             font-weight: bold;
@@ -76,9 +39,211 @@
             margin-left: 10px;
             margin-top: 8px;
         }
+        .container {
+            display: flex;
+            width: 100%;
+            margin-top: 60px; /* to avoid overlap with the fixed topbar */
+        }
+        .left, .middle, .right {
+            padding: 20px;
+        }
+        .left {
+            width: 20%;
+            background-color: #f1f1f1;
+            border-right: 1px solid #ddd;
+        }
+        .middle {
+            width: 60%;
+            background-color: #fff;
+            padding-left: 40px;  /* Added left padding for spacing */
+            position: relative;
+        }
+        .right {
+            width: 20%;
+            background-color: #f9f9f9;
+            border-left: 1px solid #ddd;
+        }
+        h2, h3 {
+            font-size: 20px;
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .empty-state {
+            color: #999;
+        }
+        .activity-item {
+            margin-bottom: 10px;
+        }
+        .activity-item span {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .activity-item .timestamp {
+            color: #888;
+        }
+        .popup-notification {
+            background-color: #f4f4f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 800px;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-family: Arial, sans-serif;
+        }
+
+        .popup-title {
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .popup-notification span {
+            font-size: 15px;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .popup-notification .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            color: #999;
+            background: transparent;
+            border: none;
+        }
+
+        .popup-notification .close-btn:hover {
+            color: #333;
+        }
+
+        /* Search Bar Styles */
+        .search-bar {
+            margin-top: 15px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .search-input {
+            width: 80%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+
+        /* Chat UI Styles */
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-bottom: 60px; /* Space for input bar */
+        }
+
+        .chat-message {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 75%;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: #d1e7ff;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background-color: #e9ecef;
+        }
+
+        .chat-input-container {
+            position: relative;
+            padding: 10px 20px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+
+        .send-icon {
+            position: absolute;
+            right: 45px; /* Fixing the send icon to the right edge */
+            cursor: pointer;
+            color: #515151;
+            font-size: 15px;
+            z-index: 1; /* Ensures the icon is above the input field */
+        }
+        .blue-button {
+            color: rgb(97, 97, 97); /* White text color */
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .blue-button:hover {
+            opacity: 50%;
+        }
+        .new-button {
+            background-color: rgb(76, 206, 71);
+            color: rgb(255, 255, 255);
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            outline: none;
+            border: none;
+            margin-left: 30px; /* Add margin to move it right */
+        }
+        .new-button:hover {
+            opacity: 50%;
+        }
     </style>
 </head>
 <body>
+
     <div class="topbar">
         <div class="left-section">
             <%- include('partials/burger-nav') %>
@@ -88,47 +253,119 @@
     </div>
 
     <div class="container">
-        <h1>Welcome, <%= user.name %>!</h1>
-        <img src="<%= user.profilePicture %>" alt="Profile Picture" class="profile-pic">
-        <p class="info"><strong>Username:</strong> <%= user.username %></p>
-        <p class="info"><strong>Email:</strong> <%= user.email %></p>
-        <p class="info"><strong>UUID:</strong> <%= user.uuid %></p>
-        <p class="info"><strong>Bio:</strong> <%= user.bio || 'No bio available' %></p>
-        <p class="info"><strong>Role:</strong> <%= user.role %></p>
-        <p class="info"><strong>Location:</strong> <%= user.location %></p>
-        <p class="info"><strong>Online Status:</strong> <%= user.onlineStatus ? 'Online' : 'Offline' %></p>
-        <p class="info"><strong>Last Login:</strong> <%= new Date(user.lastLogin).toLocaleString() %></p>
-        <p class="info"><strong>Preferences:</strong> Theme - <%= user.preferences.theme %>, Notifications - <%= user.preferences.notifications ? 'Enabled' : 'Disabled' %></p>
-
-        <h2>Your Groups:</h2>
-        <% if (groups.length > 0) { %>
-            <ul>
-                <% groups.forEach(group => { %>
-                    <li>
-                        <a href="/groups/<%= group._id %>"><%= group.name %></a> - <%= group.description %>
-                    </li>
+        <!-- Left Section: Projects -->
+        <div class="left">
+            <div>
+                <span><strong>Your Projects</strong></span>
+                <button onclick="window.location.href='/projects/new';" class="new-button">
+                    New
+                </button>
+            </div>
+            <% if (projects.length > 0) { %> <!-- Check if there are any projects -->
+                <% projects.forEach(project => { %> <!-- Loop through each project -->
+                    <% 
+                        // Check if the user is a collaborator on the project
+                        const isMember = project.collaborators.some(collaborator => collaborator._id.toString() === user.uuid.toString()); 
+                    %>
+                    
+                    <% if (isMember) { %> <!-- If user is a collaborator -->
+                        <a href="/projects/<%= project._id %>/" class="blue-button">
+                            <%= project.name %>
+                        </a>
+                    <% } %>
                 <% }); %>
-            </ul>
-        <% } else { %>
-            <p>You are not a member of any groups.</p>
-        <% } %>
-        <h2>Your Projects:</h2>
-        <% if (projects.length > 0) { %>
-            <ul>
-                <% projects.forEach(project => { %>
-                    <li>
-                        <a href="/projects/<%= project._id %>"><%= project.name %></a> - <%= project.description %>
-                    </li>
-                <% }); %>
-            </ul>
-        <% } else { %>
-            <p>You are not a collaborator on any projects.</p>
-        <% } %>
+            <% } else { %>
+                <p class="empty-state">You don't have any projects.</p> <!-- Display message when there are no projects -->
+            <% } %>
+        </div>
 
-        <a href="/edit-profile" class="btn">Edit Profile</a>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <!-- Middle Section: Feed and Chat -->
+        <!-- Middle Section: Feed and Chat -->
+        <div class="middle">
+            <h2>Home</h2>
+            
+            <!-- Chat Box to Display Messages -->
+            <div class="chat-box" id="chat-box">
+                <div class="popup-notification" id="chat-popup-notification">
+                    <span class="popup-title">Questline AI Features</span>
+                    <span>Use our built in Chat AI to find quick solutions to</span>
+                    <span>your teams issues. <strong>Ask away!</strong></span>
+                    <span class="close-btn" onclick="closeCHATNotification()">×</span>
+                </div>
+            </div>
+
+            <!-- Chat Input Container -->
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Ask Questline">
+                <span class="send-icon" onclick="sendMessage()">▶</span>
+            </div>
+
+            <div class="popup-notification" id="wlcm-popup-notification">
+                <span class="popup-title">Welcome to the Questline Dashboard</span>
+                <span>Questline is a seamless way to collaborate with other</span>
+                <span>team members and keep track of your project progress.</span>
+                <span class="close-btn" onclick="closeWLCMNotification()">×</span>
+            </div>
+            <h2>Feed</h2>
+        </div>
+
+
+        <!-- Right Section: Recent Activity -->
+        <div class="right">
+            <h3>Latest Changes</h3>
+        </div>
     </div>
 
-    <%- include('partials/footer') %>
+    <script>
+        function closeCHATNotification() {
+            document.getElementById("chat-popup-notification").style.display = "none";
+        }
+        function closeWLCMNotification() {
+            document.getElementById("wlcm-popup-notification").style.display = "none";
+        }
+
+        async function sendMessage() {
+            const chatInput = document.getElementById("chat-input");
+            const message = chatInput.value.trim();
+    
+            if (message) {
+                const chatBox = document.getElementById("chat-box");
+    
+                // User message
+                const userMessage = document.createElement("div");
+                userMessage.classList.add("chat-message", "user-message");
+                userMessage.textContent = message;
+                chatBox.appendChild(userMessage);
+    
+                // Send the prompt to the backend (OpenAI API route)
+                try {
+                    const response = await fetch('/openai/generate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ prompt: message }),
+                    });
+    
+                    const data = await response.json();
+    
+                    // AI response
+                    const aiMessage = document.createElement("div");
+                    aiMessage.classList.add("chat-message", "ai-message");
+                    aiMessage.textContent = data.response || "Error generating response.";
+                    chatBox.appendChild(aiMessage);
+                    
+                    // Scroll to the bottom of the chat
+                    chatBox.scrollTop = chatBox.scrollHeight;
+    
+                    // Clear the input
+                    chatInput.value = "";
+                } catch (error) {
+                    console.error("Error calling OpenAI:", error);
+                }
+            }
+        }
+    </script>
+
 </body>
 </html>
