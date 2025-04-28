@@ -96,6 +96,122 @@
             margin-left: 10px;
             margin-top: 8px;
         }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        /* Projects container */
+        .container {
+            margin-top: 80px;
+            padding: 20px;
+        }
+
+        .project-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .project-list li {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .project-list li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-list a {
+            font-size: 18px;
+            font-weight: 500;
+            color: #007bff;
+            text-decoration: none;
+            display: block;
+        }
+
+        .project-list a:hover {
+            text-decoration: underline;
+        }
+
+        .create-new-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .create-new-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Button styling */
+        button {
+            padding: 10px 15px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styling for form elements */
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .success-message {
+            color: green;
+            font-weight: bold;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -103,21 +219,28 @@
         <div class="left-section">
             <%- include('partials/burger-nav') %>
             <span class="page-title">Projects</span>
+            <%- include('partials/profile-header', { user: user }) %>
         </div>
     </div>
-    <header>
-        <div style="margin-top: 20px; margin-bottom: 20px;">
-            <a href="/projects/new">Create New Project</a>
+    <main>
+        <div>
+            <a href="/projects/new" class="create-new-btn">+ Create New Project</a>
         </div>
-    </header>
-    
 
-    <ul>
-        <% projects.forEach(project => { %>
-            <li>
-                <a href="/projects/<%= project._id %>"><%= project.name %></a> - Owned by <%= project.owner.username %>
-            </li>
-        <% }); %>
-    </ul>
+        <div class="projects-container">
+            <ul class="project-list">
+                <% projects.forEach(project => { %>
+                    <li>
+                        <div class="project-name">
+                            <a href="/projects/<%= project._id %>"><%= project.name %></a>
+                        </div>
+                        <div class="project-owner">
+                            Owned by <%= project.owner.username %>
+                        </div>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    </main>
 </body>
 </html>

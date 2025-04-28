@@ -1,18 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Create Group</title>
+    <style>
+        .group-form {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #fafafa;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus,
+        textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            background-color: #fff;
+        }
+        textarea {
+            resize: vertical;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .submit-btn,
+        .back-btn {
+            flex: 1;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+        .back-btn {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
 </head>
 <body>
-    <h1>Create a New Group</h1>
-    <form action="/groups" method="POST">
+
+<form action="/groups" method="POST" class="group-form">
+    <h1 style="text-align: center; margin-bottom: 30px;">Create a New Group</h1>
+
+    <div class="form-group">
         <label for="name">Group Name:</label>
-        <input type="text" name="name" required><br><br>
+        <input type="text" name="name" id="name" required>
+    </div>
 
-        <label for="description">Description:</label><br>
-        <textarea name="description" rows="4" cols="50"></textarea><br><br>
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea name="description" id="description" rows="4"></textarea>
+    </div>
 
-        <button type="submit">Create Group</button>
-    </form>
+    <div class="button-group">
+        <button type="button" class="back-btn" onclick="history.back()">Go Back</button>
+        <button type="submit" class="submit-btn">Create Group</button>
+    </div>
+</form>
+
 </body>
 </html>

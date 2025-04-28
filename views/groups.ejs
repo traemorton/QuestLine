@@ -12,62 +12,6 @@
         h1, h2 {
             color: #333;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        form {
-            margin-top: 30px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-        }
-        form div {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        input[type="text"], input[type="email"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 15px;
-            color: white;
-            background-color: #007bff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .success-message {
-            color: green;
-            font-weight: bold;
-            margin-top: 15px;
-        }
         .topbar {
             position: fixed;
             top: 0;
@@ -82,19 +26,97 @@
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
-        /* New Left Section (Burger + Page Title) */
         .left-section {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        /* Fix title alignment */
         .page-title {
-            font-size: 18px;
+            font-size: 22px;
             font-weight: bold;
             color: #333;
             margin-left: 10px;
-            margin-top: 8px;
+        }
+        .container {
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        /* Create button */
+        .create-new-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 0px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+        .create-new-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Group List Styling */
+        .group-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .group-item {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .group-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .group-item h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .group-item p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        /* Join/Leave Buttons */
+        .btn-join, .btn-leave {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-join:hover, .btn-leave:hover {
+            background-color: #0056b3;
+        }
+
+        .member-note {
+            font-weight: bold;
+            color: green;
+            margin-bottom: 10px;
+        }
+
+        /* Styling for fallback text */
+        .no-groups {
+            font-size: 18px;
+            color: #777;
+            margin-top: 30px;
         }
     </style>
 </head>
@@ -105,43 +127,37 @@
             <span class="page-title">Groups</span>
         </div>
     </div>
-    <header>
-        <div style="margin-top: 20px; margin-bottom: 20px;">
-            <a href="/groups/new" class="btn btn-primary">➕ Create New Group</a>
-        </div>
-    </header>
 
     <main class="container">
-        <h1>Groups</h1>
+        <a href="/groups/new" class="create-new-btn">➕ Create New Group</a>
+
+        <h2>List of Groups:</h2>
 
         <% if (groups.length === 0) { %>
-            <p>No groups found.</p>
+            <p class="no-groups">No groups found.</p>
         <% } else { %>
             <ul class="group-list">
                 <% groups.forEach(group => { %>
                     <li class="group-item">
-                        <article>
-                            <h2><%= group.name %></h2>
-                            <p><%= group.description %></p>
+                        <h2><%= group.name %></h2>
+                        <p><%= group.description %></p>
 
-                            <% if (typeof currentUser !== 'undefined' && currentUser && currentUser._id) { %>
-                                <% const isMember = group.members.some(member => member._id.toString() === currentUser._id.toString()); %>
+                        <% if (typeof currentUser !== 'undefined' && currentUser && currentUser._id) { %>
+                            <% const isMember = group.members.some(member => member._id.toString() === currentUser._id.toString()); %>
 
-                                <% if (!isMember) { %>
-                                    <form action="/groups/<%= group._id %>/join" method="POST">
-                                        <button type="submit" class="btn btn-join">Join Group</button>
-                                    </form>
-                                <% } else { %>
-                                    <p class="member-note">✅ You are a member</p>
-                                    <!-- Add a form to leave the group -->
-                                    <form action="/groups/<%= group._id %>/leave" method="POST">
-                                        <button type="submit" class="btn btn-leave">Leave Group</button>
-                                    </form>
-                                <% } %>
+                            <% if (!isMember) { %>
+                                <form action="/groups/<%= group._id %>/join" method="POST">
+                                    <button type="submit" class="btn-join">Join Group</button>
+                                </form>
                             <% } else { %>
-                                <p><em>Log in to join or leave this group.</em></p>
+                                <p class="member-note">✅ You are a member</p>
+                                <form action="/groups/<%= group._id %>/leave" method="POST">
+                                    <button type="submit" class="btn-leave">Leave Group</button>
+                                </form>
                             <% } %>
-                        </article>
+                        <% } else { %>
+                            <p><em>Log in to join or leave this group.</em></p>
+                        <% } %>
                     </li>
                 <% }); %>
             </ul>

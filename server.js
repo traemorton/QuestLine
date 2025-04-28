@@ -215,6 +215,7 @@ app.get('/dashboard', isAuthenticated, async (req, res) => {
     }
 });
 
+// Edit Profile Route
 app.get('/edit-profile', isAuthenticated, async (req, res) => {
     try {
         const user = await User.findById(req.session.userId);
@@ -384,7 +385,9 @@ app.post('/groups/:groupId/leave', isAuthenticated, async (req, res) => {
 app.get('/projects', isAuthenticated, async (req, res) => {
     try {
         const projects = await Project.find().populate('owner');
-        res.render('projects', { projects });
+        const user = await User.findById(req.session.userId);
+        
+        res.render('projects', { projects, user });
     } catch (err) {
         console.error('Error loading projects:', err);
         res.status(500).send('Error loading projects');
