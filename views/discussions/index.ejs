@@ -1,132 +1,116 @@
 <style>
-  body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      padding-top: 50px;
-      background-color: #f0f2f5;
-  }
-
-  .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 20px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-  }
-
-  .left-section {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-  }
-
-  .page-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-      margin-left: 10px;
-      margin-top: 8px;
-  }
-
-  .container {
-      padding: 30px;
-      border: 1px solid #ddd;
-      background-color: #fff;
-      border-radius: 8px;
-      max-width: 700px;
-      margin: auto;
-      margin-top: 30px;
-  }
-
-  h2, h3 {
-      color: #333;
-      margin-bottom: 10px;
-  }
-
-  p {
-      color: #555;
-      font-size: 16px;
-      margin-bottom: 8px;
-  }
-
-  ul {
-      list-style-type: disc;
-      padding-left: 20px;
-      margin-bottom: 20px;
-  }
-
-  li {
-      font-size: 15px;
-      margin-bottom: 6px;
-      color: #444;
-  }
-
-  a {
-      text-decoration: none;
-      color: #007bff;
-  }
-
-  a:hover {
-      text-decoration: underline;
-  }
-
-  form {
-      margin-top: 10px;
-  }
-
-  input[type="file"],
-  input[type="date"],
-  select {
-      margin-bottom: 10px;
-      padding: 6px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-  }
-
-  button {
-      padding: 8px 14px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-  }
-
-  button:hover {
-      opacity: 70%;
-  }
-
-  section {
-      margin-bottom: 30px;
-  }
-
-  .form-inline label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-  }
-
-</style>
-<div class="topbar">
-  <div class="left-section">
-      <%- include('../partials/burger-nav') %>
-      <span class="page-title">Discussions</span>
+    body {
+        font-family: 'Inter', 'Arial', sans-serif;
+        padding: 80px 20px 20px 20px;
+        background-color: #f8f9fb;
+        color: #333;
+    }
+  
+    .topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: #ffffff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+    }
+  
+    .left-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+  
+    .page-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #222;
+    }
+  
+    header {
+        max-width: 700px;
+        margin: 30px auto 20px;
+        text-align: right;
+    }
+  
+    header a {
+        font-size: 16px;
+        font-weight: 500;
+        padding: 10px 18px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+  
+    header a:hover {
+        background-color: #0056b3;
+    }
+  
+    ul {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 0;
+        list-style: none;
+    }
+  
+    li {
+        background: #ffffff;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: box-shadow 0.2s ease;
+    }
+  
+    li:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    }
+  
+    li a {
+        font-size: 17px;
+        font-weight: 600;
+        color: #007bff;
+        text-decoration: none;
+    }
+  
+    li a:hover {
+        text-decoration: underline;
+    }
+  
+    li span {
+        font-size: 14px;
+        color: #666;
+    }
+  </style>
+  
+  <div class="topbar">
+    <div class="left-section">
+        <%- include('../partials/burger-nav') %>
+        <span class="page-title">Discussions</span>
+    </div>
   </div>
-</div>
-<header>
-  <div style="margin-top: 20px; margin-bottom: 20px;">
+  
+  <header>
     <a href="/discussions/new">Start a new discussion</a>
-  </div>
-</header>
-<ul>
-  <% discussions.forEach(d => { %>
-    <li><a href="/discussions/<%= d._id %>"><%= d.title %></a> by <%= d.author.username %></li>
-  <% }) %>
-</ul>
+  </header>
+  
+  <ul>
+    <% discussions.forEach(d => { %>
+      <li>
+        <a href="/discussions/<%= d._id %>"><%= d.title %></a>
+        <span>by <%= d.author.username %></span>
+      </li>
+    <% }) %>
+  </ul>
+  
