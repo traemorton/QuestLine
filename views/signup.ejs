@@ -3,21 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Signup</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            margin-top: 60px;
+        }
+        .signup-form {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         h1 {
             color: #333;
-        }
-        form {
-            margin-top: 30px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            border-radius: 8px;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
         form div {
             margin-bottom: 15px;
@@ -27,11 +65,12 @@
             font-weight: bold;
             margin-bottom: 5px;
         }
-        input[type="email"], input[type="text"], input[type="password"] {
+        input[type="text"], input[type="email"], input[type="password"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 14px;
         }
         button {
             padding: 10px 15px;
@@ -40,6 +79,9 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
         }
         button:hover {
             background-color: #0056b3;
@@ -49,39 +91,63 @@
             font-weight: bold;
             margin-top: 15px;
         }
+        .blue-button {
+            color: #ffffff;
+            background-color: #007bff;
+            padding: 8px 0px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .blue-button:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
 
-    <%- include('partials/header') %>
-
-    <h1>Sign Up</h1>
-
-    <form action="/signup" method="POST">
-        <div>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+    <div class="topbar">
+        <div class="left-section">
+            <%- include('partials/burger-nav') %>
+            <span class="page-title">SignUp</span>
         </div>
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit">Sign Up</button>
-    </form>
+    </div>
 
-    <% if (errorMessage) { %>
-        <div class="error-message"><%= errorMessage %></div>
-    <% } %>
+    <div class="container">
+        <div class="signup-form">
+            <h1>Sign Up</h1>
+            <form action="/signup" method="POST">
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
 
-    <%- include('partials/footer') %>
+            <% if (errorMessage) { %>
+                <div class="error-message"><%= errorMessage %></div>
+            <% } %>
+
+            <a href="/login" class="blue-button">Already have an account? Login</a>
+        </div>
+    </div>
 
 </body>
 </html>

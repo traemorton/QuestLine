@@ -2,34 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>New Task</title>
-    <link rel="stylesheet" href="/styles.css"> <!-- Make sure you have your dark mode CSS linked -->
+    <title>Create New Task</title>
+    <link rel="stylesheet" href="/styles.css"> <!-- Make sure your CSS is linked -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .task-form {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fafafa;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            background-color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .back-btn {
+            background-color: #6c757d;
+            color: #fff;
+            padding: 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .link-button {
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link-button:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+
     <h1>Create New Task</h1>
 
-    <form action="/projects/<%= projectId %>/tasks" method="POST">
-        <label for="title">Task Title:</label>
-        <input type="text" id="title" name="title" placeholder="Enter task title" required>
+    <div class="task-form">
+        <form action="/projects/<%= projectId %>/tasks" method="POST">
+            <div class="form-group">
+                <label for="title">Task Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter task title" required>
+            </div>
 
-        <label for="description">Task Description:</label>
-        <textarea id="description" name="description" placeholder="Enter task description"></textarea>
+            <div class="form-group">
+                <label for="description">Task Description:</label>
+                <textarea id="description" name="description" placeholder="Enter task description"></textarea>
+            </div>
 
-        <label for="dueDate">Due Date:</label>
-        <input type="date" id="dueDate" name="dueDate">
+            <div class="form-group">
+                <label for="dueDate">Due Date:</label>
+                <input type="date" id="dueDate" name="dueDate">
+            </div>
 
-        <label for="assignedTo">Assign To:</label>
-        <select id="assignedTo" name="assignedTo">
-            <option value="">-- Select Collaborator --</option>
-            <% collaborators.forEach(user => { %>
-                <option value="<%= user._id %>"><%= user.name %></option>
-            <% }) %>
-        </select>
+            <div class="form-group">
+                <label for="assignedTo">Assign To:</label>
+                <select id="assignedTo" name="assignedTo">
+                    <option value="">-- Select Collaborator --</option>
+                    <% collaborators.forEach(user => { %>
+                        <option value="<%= user._id %>"><%= user.name %></option>
+                    <% }) %>
+                </select>
+            </div>
 
-        <button type="submit">Create Task</button>
-    </form>
+            <div class="button-group">
+                <button type="button" class="back-btn" onclick="history.back()">Back to Project</button>
+                <button type="submit">Create Task</button>
+            </div>
+        </form>
+    </div>
 
-    <br>
-    <a href="/projects/<%= projectId %>">Back to Project</a>
 </body>
 </html>

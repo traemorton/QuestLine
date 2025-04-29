@@ -93,7 +93,7 @@ function isAuthenticated(req, res, next) {
 
 // Routes
 app.get("/", (req, res) => {
-    res.render('index');
+    res.redirect('/dashboard');
 });
 
 // Route for rendering users
@@ -468,6 +468,56 @@ app.post('/projects/:id', async (req, res) => {
 
     await Project.findByIdAndUpdate(req.params.id, updateData);
     res.redirect(`/projects/${req.params.id}`);
+});
+
+// Project Joining Route
+app.post('/projects/:projectId/join', isAuthenticated, async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login'); // Ensure user is logged in
+
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).send('Project not found');
+        }
+
+        // Check if the user is already a member of the project
+        if (project.collaborators.includes(user._id)) {
+            return res.redirect('/projects'); // Redirect if already a member
+        }
+
+        // Add the user to the project's collaborators array
+        project.collaborators.push(user._id);
+        await project.save();
+
+        res.redirect('/projects'); // Redirect back to projects page
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error joining project');
+    }
+});
+
+// Project Leaving Route
+app.post('/projects/:projectId/leave', isAuthenticated, async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const user = await User.findById(req.session.userId);
+        if (!user) return res.redirect('/login');
+
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).send('Project not found');
+        }
+
+        project.collaborators = project.collaborators.filter(collaborator => collaborator._id.toString() !== user._id.toString());
+        await project.save();
+
+        res.redirect('/projects');  // Redirect to the project list after leaving
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error leaving project');
+    }
 });
 
 app.post('/projects/:projectId/tasks', async (req, res) => {

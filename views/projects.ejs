@@ -82,45 +82,26 @@
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
-        /* New Left Section (Burger + Page Title) */
         .left-section {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        /* Fix title alignment */
-        .page-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-left: 10px;
-            margin-top: 8px;
-        }
-        .left-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
         .page-title {
             font-size: 22px;
             font-weight: bold;
             color: #333;
             margin-left: 10px;
         }
-
-        /* Projects container */
         .container {
             margin-top: 80px;
             padding: 20px;
         }
-
         .project-list {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
-
         .project-list li {
             background-color: #fff;
             padding: 15px;
@@ -129,12 +110,10 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
         }
-
         .project-list li:hover {
             transform: translateY(-5px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-
         .project-list a {
             font-size: 18px;
             font-weight: 500;
@@ -142,11 +121,9 @@
             text-decoration: none;
             display: block;
         }
-
         .project-list a:hover {
             text-decoration: underline;
         }
-
         .create-new-btn {
             display: inline-block;
             padding: 10px 20px;
@@ -159,12 +136,9 @@
             margin-bottom: 30px;
             transition: background-color 0.3s;
         }
-
         .create-new-btn:hover {
             background-color: #0056b3;
         }
-
-        /* Button styling */
         button {
             padding: 10px 15px;
             color: white;
@@ -175,12 +149,9 @@
             font-size: 16px;
             transition: background-color 0.3s;
         }
-
         button:hover {
             background-color: #0056b3;
         }
-
-        /* Styling for form elements */
         form {
             background-color: #fff;
             padding: 20px;
@@ -188,17 +159,14 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-top: 30px;
         }
-
         form div {
             margin-bottom: 15px;
         }
-
         label {
             display: block;
             font-weight: 600;
             margin-bottom: 5px;
         }
-
         input[type="text"], input[type="email"], input[type="password"] {
             width: 100%;
             padding: 10px;
@@ -206,7 +174,6 @@
             border-radius: 4px;
             font-size: 16px;
         }
-
         .success-message {
             color: green;
             font-weight: bold;
@@ -237,6 +204,16 @@
                         <div class="project-owner">
                             Owned by <%= project.owner.username %>
                         </div>
+                        <% if (!project.collaborators.includes(user._id)) { %>
+                            <form action="/projects/<%= project._id %>/join" method="POST">
+                                <button type="submit">Join Project</button>
+                            </form>
+                        <% } else { %>
+                            <!-- "Leave" Button appears if the user is a collaborator -->
+                            <form action="/projects/<%= project._id %>/leave" method="POST" onsubmit="return confirm('Are you sure you want to leave this project?');">
+                                <button type="submit" class="leave-btn">Leave Project</button>
+                            </form>
+                        <% } %>
                     </li>
                 <% }); %>
             </ul>
