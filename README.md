@@ -1,4 +1,6 @@
-# QuestLine
+<p align="center">
+  <img src="public/images/questline-logo.png" alt="logo" width="300"/>
+</p>
 
 ## Overview
 Questline is a web-based project management platform designed for game development. It centralizes documentation, task assignment, and timelines to enhance team collaboration and productivity.
@@ -9,8 +11,16 @@ Questline is a web-based project management platform designed for game developme
 - **User & Team Management**: Secure registration, team roles, and permissions.
 - **Task Management**: Create, assign, and track tasks with deadlines.
 - **Documentation**: Centralized document storage with version control.
-- **Timelines**: Visualize project schedules with Gantt charts or calendars.
+- **Timelines**: Visualize project schedules with organized task duedates
 - **Real-Time Collaboration**: Instant updates and comments on tasks.
+
+## Screenshots
+<p align="center">
+  <img src="public/images/Screenshot 2025-04-28 at 8.28.17 PM.png" alt="main" width="700"/>
+  <img src="public/images/Screenshot 2025-04-28 at 8.28.39 PM.png" alt="projects" width="700"/>
+  <img src="public/images/Screenshot 2025-04-28 at 8.28.52 PM.png" alt="discussions" width="700"/>
+  <img src="public/images/Screenshot 2025-04-28 at 8.29.00 PM.png" alt="profile" width="700"/>
+</p>
 
 ## Installation
 ### Requirements:
